@@ -10,5 +10,8 @@ struct V6_file {
 
 typedef struct V6_file file_entry;
 
+ssize_t read_file(const char *filename, void *buf, size_t count);
+int current_directory(const char *filename);
+ssize_t read_directory(struct inode);    
 
 #endif

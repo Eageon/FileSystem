@@ -17,5 +17,6 @@ struct inode {
 
 #define INODESIZE sizeof(struct inode)
 #define INODES_PER_BLOCK BLOCKSIZE/INODESIZE 
-
+void read_inode(uint inode, struct inode *inode_buf);
+void write_inode(uint inode, struct inode *inode_buf);
 #endif

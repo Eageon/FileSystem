@@ -7,13 +7,16 @@ uint curr_inode_num;
 
 
 void read_inode(uint inode, struct inode *inode_buf) {
-        if(inode != curr_inode) {
+        if(inode != curr_inode_num) {
+                curr_inode_num = inode;
                 int block_index = (inode - 1) / INODES_PER_BLOCK + 2;
                 int inode_offset = (inode - 1) - block_index * INODES_PER_BLOCK;
                 int byte_offset + inode_offset * INODESIZE;
 
-                if(block_index != curr_block_num)
+                if(block_index != curr_block_num) {
+                        curr_block_num = block_index;
                         read_block(block_index, &curr_block, BLOCKSIZE);
+                }
 
                 memcpy(&curr_inode, &curr_block + byte_offset, INODESIZE);
         }
@@ -29,7 +32,7 @@ void write_inode(uint inode, struct inode *inode_buf) {
         memcpy(&curr_inode, inode_buf, INODESIZE);
 
         if(block_index != curr_block_num)
-                        read_block(block_index, &curr_block, BLOCKSIZE);
+                read_block(block_index, &curr_block, BLOCKSIZE);
 
         memcpy(&curr_block + byte_offset, &curr_inode, INODESIZE);
         write_block(block_index, &curr_block, BLOCKSIZE);

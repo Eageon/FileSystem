@@ -57,7 +57,10 @@ char *read_filename_from_inode(struct file_entry *file) {
 }
 
 int is_this_file(struct file_entry *entry, const char* filename) {
-
+	if(strcmp(entry->filename, filename) == 0)
+		return 1;
+	else 
+		return 0;
 }
 
 //return inode number

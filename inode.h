@@ -15,6 +15,10 @@ struct inode {
     long modtime[2];
 };
 
+struct inode_data {
+	uint addr[21];
+};
+
 #define INODESIZE sizeof(struct inode)
 #define INODES_PER_BLOCK BLOCKSIZE/INODESIZE 
 void read_inode(uint inode, struct inode *inode_buf);

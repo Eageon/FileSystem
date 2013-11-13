@@ -20,5 +20,7 @@ typedef unsigned int uint;
         #define DEBUG(format, ...) do { }while(0)
 #endif
 
+#define ERROR(format, ...) do { fprintf(stderr, format, ##__VA_ARGS__); exit(-1); }while(0)
+
 #endif
 

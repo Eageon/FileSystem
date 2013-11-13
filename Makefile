@@ -1,6 +1,6 @@
 # Author Jun Yu
 
-EXECUTABLE := faccess
+EXECUTABLE := initfs
 LIBS :=
 CC := gcc
 LD := ld

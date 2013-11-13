@@ -7,7 +7,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <strings.h>
-
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef unsigned char byte;
 typedef unsigned short ushort;

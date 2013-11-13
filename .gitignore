@@ -21,3 +21,5 @@
 *.h~
 .gitignore~
 *.swp
+*.swo
+*.orig

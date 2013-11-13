@@ -6,7 +6,7 @@ extern struct super_block curr_superblock;
 
 inline void write_superblock() {
         int bytes = 0;
-        if((bytes = write(curr_fd, &curr_superblock, sizeof(struct super_block)) < 0 ) {
+        if((bytes = write(curr_fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
                 fprintf(stderr, "Error in write th superblock errno = %d\n", -bytes);
                 exit(errno);
         }

@@ -39,17 +39,17 @@ void write_inode(uint inode, struct inode *inode_buf) {
 
 void free_inode(uint free_inode) {
     int i;
-    if(s_super->ninode == MAX_SIZE) 
+    if(s_super.ninode == MAX_SIZE) 
         return;
-    s_super->inode[s_super->ninode] = i;
-    s_super->ninode++; 
+    s_super.inode[s_super.ninode] = i;
+    s_super.ninode++; 
 }
 
 uint allocate_inode() {
-    if(s_super->ninode == 0) 
+    if(s_super.ninode == 0) 
         initiate_inode_list(s_super);
-    s_super->ninode--;
-    uint inode_id = s_super->inode[s_super->ninode];
+    s_super.ninode--;
+    uint inode_id = s_super.inode[s_super.ninode];
     return inode_id; 
            
 }

@@ -28,17 +28,17 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
 
 void initiate_inode_list() {
 
-    uint inode_number = curr_superblock->isize * INODE_PER_BLOCK;
+    uint inode_number = curr_superblock.isize * INODE_PER_BLOCK;
     int i;
     for(i = 2; i < inode_number; i++) {
-        if(curr_superblock->ninode == MAX_SIZE) 
+        if(curr_superblock.ninode == MAX_SIZE) 
             break;
         struct inode ino;
         read_inode(i, &ino);
         if(is_free_inode(&ino))
             free_inode(i);    
     }
-    if(curr_superblock->ninode == 0){ 
+    if(curr_superblock.ninode == 0){ 
         fprintf(stderr,"Error: the inode blocks are full, allocation falure!");
         exit(-1);
     }
@@ -53,7 +53,7 @@ void print_superblock() {
         printf("free %d: %d  ",i, curr_superblock.free[i]);
     }
     printf("\n");
-    printf("ninode: %d\n",curr_superblock->ninode);
+    printf("ninode: %d\n",curr_superblock.ninode);
     for(i = 0; i<curr_superblock.nfree; i++){
         printf("free %d: %d  ",i, curr_superblock.inode[i]);
     }

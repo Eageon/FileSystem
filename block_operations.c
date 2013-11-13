@@ -57,9 +57,9 @@ void free_block(uint free_block) {
     if(curr_superblock.nfree ==  MAX_SIZE) {
         struct head_free_block w;
         int i;
-        w.nfr = curr_superblock->nfree;
-        memcpy(w.fr, curr_superblock->free, curr_superblock->nfree * sizeof(uint));
-        write_block(free_block, (void*)&w, (curr_superblock->nfree + 1) * sizeof(uint)); //write nfree and free array into block i;
+        w.nfr = curr_superblock.nfree;
+        memcpy(w.fr, curr_superblock.free, curr_superblock.nfree * sizeof(uint));
+        write_block(free_block, (void*)&w, (curr_superblock.nfree + 1) * sizeof(uint)); //write nfree and free array into block i;
         curr_superblock.nfree = 0;
     }
     curr_superblock.free[curr_superblock.nfree++] = free_block;    
@@ -67,18 +67,18 @@ void free_block(uint free_block) {
 
 
 uint allocate_block() {
-    curr_superblock->nfree--;
-    uint block_id = curr_superblock->free[curr_superblock->nfree];
+    curr_superblock.nfree--;
+    uint block_id = curr_superblock.free[curr_superblock.nfree];
     if(block_id == 0) {
         fprintf(stderr, "Error: the data blocks are full, allocation failure\n");
         exit(-1);
     }
-    if(curr_superblock->nfree == 0) {
+    if(curr_superblock.nfree == 0) {
         struct head_free_block w;
         int i;
-        read_block(block_id, (void*)&w, curr_superblock->nfree * sizeof(uint));
-        curr_superblock->nfree = w.nfr;
-        memcpy(curr_superblock->free, w.fr, (curr_superblock->nfree + 1) * sizeof(uint));
+        read_block(block_id, (void*)&w, curr_superblock.nfree * sizeof(uint));
+        curr_superblock.nfree = w.nfr;
+        memcpy(curr_superblock.free, w.fr, (curr_superblock.nfree + 1) * sizeof(uint));
     }
     return block_id;
 }

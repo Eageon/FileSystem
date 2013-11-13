@@ -23,8 +23,12 @@ struct head_free_block {
     uint padding[512 - MAX_SIZE - 1];
 };
 
+struct block {
+    uint data[512];
+};
+
 struct data_block {
-    int data[512];
+    uint data[512];
 };
 inline void write_superblock();
 ssize_t read_block(int block, void* buf, size_t count);

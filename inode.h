@@ -25,5 +25,5 @@ void read_inode(uint inode, struct inode *inode_buf);
 void write_inode(uint inode, struct inode *inode_buf);
 void free_inode(uint free_inode);
 uint allocate_inode();
-bool is_free_inode(struct inode* ino);
+int is_free_inode(struct inode* ino);
 #endif

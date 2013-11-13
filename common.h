@@ -2,13 +2,14 @@
 #define __COMMON_FILESYSTEM_JUN__
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/signal.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <strings.h>
-
-
+#include <string.h>
 typedef unsigned char byte;
 typedef unsigned short ushort;
 typedef unsigned long ulong;

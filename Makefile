@@ -1,7 +1,7 @@
 # Author Jun Yu
 
 EXECUTABLE := faccess
-LIBS :=
+LIBS := pthread
 CC := gcc
 LD := ld
 
@@ -15,7 +15,7 @@ else
         MACRO :=
 endif
 
-LIB += -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i386-linux-gnu/ -lpthread
+LIB += -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i386-linux-gnu/
 CFLAGS := $(DEBUG) $(MACRO) -Wall
 CXXFLAGS := $(CFLAGS)
 LDFLAGS := $(DEBUG) $(LIB)
@@ -54,4 +54,4 @@ endif
 -include $(DEPS)
 
 $(EXECUTABLE) : $(OBJS)
-	gcc -o $(EXECUTABLE) $(OBJS) $(addprefix -l,$(LIBS))
+	gcc -o $(EXECUTABLE) $(OBJS) $(LIB) $(addprefix -l,$(LIBS))

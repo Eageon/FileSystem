@@ -11,14 +11,14 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
     curr_superblock.fsize = total_block_number;
     curr_superblock.nfree = 0;
     curr_superblock.ninode = 0;
-    free_block(&curr_superblock, 0);
+    //free_block(&curr_superblock, 0);
     uint max_inode_block = 1 + inode_block_number;
-    for(i = fsize - 1; i > max_data_block; i--) {
+    for(i = curr_superblock.fsize - 1; i > max_inode_block; i--) {
         free_block(i);
     }
     int arr[512];
     memset(arr,0 ,sizeof(arr));
-    for(i = 2; i <= max_data_block; i++)
+    for(i = 2; i <= max_inode_block; i++)
         write_block(i, arr, sizeof(arr)); 
     initiate_inode_list(&curr_superblock);
      
@@ -28,7 +28,7 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
 
 void initiate_inode_list() {
 
-    uint inode_number = curr_superblock.isize * INODE_PER_BLOCK;
+    uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
     int i;
     for(i = 2; i < inode_number; i++) {
         if(curr_superblock.ninode == MAX_SIZE) 
@@ -63,23 +63,23 @@ int main(int argc, char** argv) {
          printf("Usage: initfs file_name(representing disk) n1(total number of blocks) n2(total number of blocks containing inodes)\n");
     }
 
-    fd = open(argv[1], O_CREAT | O_RDWR);
-    if (fd == -1) {
+    curr_fd = open(argv[1], O_CREAT | O_RDWR);
+    if (curr_fd == -1) {
         perror("File cannot be opened");
         exit(-1);
     }
     int n1 = atoi(argv[2]);
     int n2 = atoi(argv[3]);
-    initiate_super_block(fd, n1, n2);
+    initiate_super_block(curr_fd, n1, n2);
     print_superblock();
-    while(true)
+    while(1)
         printf("allocated block: %d\n", allocate_block());
     int i;
     for(i = n2+2; i<n1; i++) {
         free_block(i);
     }
     print_superblock();
-    close(fd);
+    close(curr_fd);
     return 0;
 }
 

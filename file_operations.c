@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "block.h"
 
-extern struct V6_file curr_file;
+struct V6_file curr_file;
 extern struct inode curr_inode;
 extern uint curr_inode_num;
 
@@ -49,7 +49,7 @@ int read_directory(struct inode *dir_inode, struct file_entry **entries, int *en
 	}
 
 	int byte_in_block = dir_inode->size - num_full_block * BLOCKSIZE;
-	memncpy((struct block *)entries[num_full_block], data.addr[num_full_block], (int)byte_in_block);
+	memcpy((struct block *)entries[num_full_block], data.addr[num_full_block], (int)byte_in_block);
 
 	return 0;
 }

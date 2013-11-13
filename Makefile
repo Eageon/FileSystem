@@ -5,7 +5,7 @@ LIBS :=
 CC := gcc
 LD := ld
 
-DEBUG_MODE := n
+DEBUG_MODE := y
 
 ifeq ($(DEBUG_MODE), y)
         DEBUG := -g
@@ -15,7 +15,7 @@ else
         MACRO :=
 endif
 
-LIB += -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i386-linux-gnu/ -lpthread
+LIB += -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i386-linux-gnu/
 CFLAGS := $(DEBUG) $(MACRO) -Wall
 CXXFLAGS := $(CFLAGS)
 LDFLAGS := $(DEBUG) $(LIB)

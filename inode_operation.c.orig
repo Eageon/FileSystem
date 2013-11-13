@@ -44,6 +44,7 @@ void free_inode(uint free_inode) {
     s_super.inode[s_super.ninode] = i;
     s_super.ninode++; 
 }
+>>>>>>> Ji/master
 
 uint allocate_inode() {
     if(s_super.ninode == 0) 

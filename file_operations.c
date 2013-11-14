@@ -16,32 +16,38 @@ int read_file_by_inode(struct inode *file_inode, byte* buf) {
     }
 
     struct inode_data data;
-	read_inode_data(dir_inode, &data);
+	read_inode_data(file_inode, &data);
 
 	int i;
-	int num_full_block = dir_inode->size / BLOCKSIZE;
+	int num_full_block = file_inode->size / BLOCKSIZE;
 	struct block tmp_block;
 	for(i = 0; i < num_full_block; i++) {
 		read_block(data.addr[i], &tmp_block, BLOCKSIZE);
 		memcpy(buf + BLOCKSIZE * i, &tmp_block, BLOCKSIZE);
 	}
 
-	int extra_byte_in_block = dir_inode->size - num_full_block * BLOCKSIZE;
-	memcpy(buf + BLOCKSIZE * num_full_block, data.addr[num_full_block], (int)extra_byte_in_block);
+	int extra_byte_in_block = file_inode->size - num_full_block * BLOCKSIZE;
+	read_block(data.addr[num_full_block], &tmp_block, BLOCKSIZE);
+	memcpy(buf + BLOCKSIZE * num_full_block, tmp_block.data, (int)extra_byte_in_block);
 
 	return 0;
 }
 
 int write_file_by_inode(struct inode *file_inode, byte* buf, size_t count) {
-	int full_blocks = file_inode->size / BLOCKSIZE;
-	int extra_bytes = file_inode->size - full_blocks * BLOCKSIZE;
 	struct inode_data data;
 	read_inode_data(file_inode, &data);
 
-	int i = 0;
-	for(i = 0; i < full_blocks; i++) {
-
+	int i;
+	int num_full_block = file_inode->size / BLOCKSIZE;
+	struct block tmp_block;
+	for(i = 0; i < num_full_block; i++) {
+		memcpy(&tmp_block, buf + BLOCKSIZE * i, BLOCKSIZE);
+		write_block(data.addr[i], &tmp_block, BLOCKSIZE);
 	}
+
+	int extra_byte_in_block = file_inode->size - num_full_block * BLOCKSIZE;
+	memcpy(tmp_block.data, buf + BLOCKSIZE * num_full_block, (int)extra_byte_in_block);
+	write_block(data.addr[num_full_block], &tmp_block, BLOCKSIZE);
 }
 
 uint current_directory(const char *filename) {

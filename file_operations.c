@@ -4,20 +4,27 @@
 #include "block.h"
 
 struct V6_file curr_file;
+struct V6_file curr_dir;
 extern struct inode curr_inode;
 extern uint curr_inode_num;
 
-
-ssize_t read_file(const char *filename, void *buf, size_t count) {
-    struct inode inode;
+int read_file_by_inode(struct inode *file_inode, byte* buf) {
+	struct inode inode;
     read_inode(curr_file.inumber, &inode);
     if(inode.flags | 0100000 == 0 ) {
-       	ERROR("Interna: error: ");
+       	ERROR("Interna: error: not a");
     }
 }
 
-int current_directory(const char *filename) {
+int write_file_by_inode(struct inode *file_inode, byte* buf, size_t count) {
 
+}
+
+uint current_directory(const char *filename) {
+	uint tmp_inode = find_file_in_current_directory(filename);
+	if(tmp_inode < 1) {
+		return -1;
+	}
 }
 
 inline int read_inode_data(struct inode *file_inode, struct inode_data *data) {
@@ -30,10 +37,10 @@ inline int read_inode_data(struct inode *file_inode, struct inode_data *data) {
 //}
 
 int read_directory(struct inode *dir_inode, struct file_entry **entries, int *entry_num) {
-	if(entries == NULL)
+	if(*entries == NULL)
 		return -1;
 
-	int ENTRY_NUM = dir_inode->size / FILE_ENTRY_SIZE;
+	int ENTRY_NUM = dir_inode->size / FILE_ENTRY_SIZE; 
 	*entries = malloc(ENTRY_NUM * FILE_ENTRY_SIZE);
 	*entry_num = ENTRY_NUM;
 
@@ -54,9 +61,9 @@ int read_directory(struct inode *dir_inode, struct file_entry **entries, int *en
 	return 0;
 }
 
-char *read_filename_from_inode(struct file_entry *file) {
-	//return file_inode.filename;
-}
+// char *read_filename_from_inode(struct file_entry *file) {
+// 	//return file_inode.filename;
+// }
 
 int is_this_file(struct file_entry *entry, const char* filename) {
 	if(strcmp(entry->filename, filename) == 0)
@@ -65,10 +72,20 @@ int is_this_file(struct file_entry *entry, const char* filename) {
 		return 0;
 }
 
-//return inode number
-int find_file_in_current_directory(const char *filename) {
-	if(curr_file.inumber != curr_inode_num) {
-		curr_inode_num = curr_file.inumber;
+inline uint file_to_inode(struct V6_file* file) {
+	return file->inumber;
+}
+
+// inline uint inode_to_file(uint inode, struct V6_file* file) {
+// 	//struct inode inode_buf;
+// 	//read_inode(inode, &inode_buf);
+// 	//return
+// }
+
+//return inode number 
+uint find_file_in_directory(const char *filename, struct V6_file *spec_dir) {
+	if(spec_dir.inumber != curr_inode_num) {
+		curr_inode_num = spec_dir.inumber;
 		read_inode(curr_inode_num, &curr_inode);
 	}
 
@@ -87,9 +104,16 @@ int find_file_in_current_directory(const char *filename) {
 	int i = 0;
 	for(i = 0; i < entry_num; i++) {
 		if(is_this_file(&entries[i], filename)) {
-			return entries[i].inumber;
+			int ret = entries[i].inumber;
+			free(entries);
+			return ret;
 		}
 	}
 
 	return -1;
+}
+
+//return inode number
+uint find_file_in_current_directory(const char *filename) {
+	return find_file_in_directory(filename, &curr_dir);
 }

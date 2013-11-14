@@ -19,11 +19,11 @@ struct inode_data {
 	uint addr[21];
 };
 
-#define INODESIZE (sizeof(struct inode))
-#define INODES_PER_BLOCK (BLOCKSIZE/INODESIZE) 
+#define INODESIZE sizeof(struct inode)
+#define INODES_PER_BLOCK (BLOCKSIZE/INODESIZE)
 void read_inode(uint inode, struct inode *inode_buf);
 void write_inode(uint inode, struct inode *inode_buf);
-void free_inode(uint free_inode);
+int free_inode(uint free_inode);
 uint allocate_inode();
 int is_free_inode(struct inode* ino);
 #endif

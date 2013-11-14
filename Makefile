@@ -1,7 +1,7 @@
 # Author Jun Yu
 
 EXECUTABLE := initfs
-LIBS := pthread
+LIBS :=
 CC := gcc
 LD := ld
 

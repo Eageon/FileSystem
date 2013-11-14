@@ -3,18 +3,45 @@
 #include "inode.h"
 #include "block.h"
 
-struct V6_file curr_dir;
+//struct V6_file curr_file;
+extern struct V6_file curr_dir;
+//extern struct inode curr_inode;
+//extern uint curr_inode_num;
 
 int read_file_by_inode(struct inode *file_inode, byte* buf) {
-    struct inode inode;
-    read_inode(file_inode.inumber, &inode);
+	struct inode inode;
+    read_inode(curr_file.inumber, &inode);
     if(inode.flags | 0100000 == 0 ) {
        	ERROR("Interna: error: not a");
     }
+
+    struct inode_data data;
+	read_inode_data(dir_inode, &data);
+
+	int i;
+	int num_full_block = dir_inode->size / BLOCKSIZE;
+	struct block tmp_block;
+	for(i = 0; i < num_full_block; i++) {
+		read_block(data.addr[i], &tmp_block, BLOCKSIZE);
+		memcpy(buf + BLOCKSIZE * i, &tmp_block, BLOCKSIZE);
+	}
+
+	int extra_byte_in_block = dir_inode->size - num_full_block * BLOCKSIZE;
+	memcpy(buf + BLOCKSIZE * num_full_block, data.addr[num_full_block], (int)extra_byte_in_block);
+
+	return 0;
 }
 
 int write_file_by_inode(struct inode *file_inode, byte* buf, size_t count) {
+	int full_blocks = file_inode->size / BLOCKSIZE;
+	int extra_bytes = file_inode->size - full_blocks * BLOCKSIZE;
+	struct inode_data data;
+	read_inode_data(file_inode, &data);
 
+	int i = 0;
+	for(i = 0; i < full_blocks; i++) {
+
+	}
 }
 
 uint current_directory(const char *filename) {
@@ -41,21 +68,7 @@ int read_directory(struct inode *dir_inode, struct file_entry **entries, int *en
 	*entries = malloc(ENTRY_NUM * FILE_ENTRY_SIZE);
 	*entry_num = ENTRY_NUM;
 
-	struct inode_data data;
-	read_inode_data(dir_inode, &data);
-
-	int i;
-	int num_full_block = dir_inode->size / BLOCKSIZE;
-	struct block tmp_block;
-	for(i = 0; i < num_full_block; i++) {
-		read_block(data.addr[i], &tmp_block, BLOCKSIZE);
-		memcpy((struct block *)entries[i], &tmp_block, BLOCKSIZE);
-	}
-
-	int byte_in_block = dir_inode->size - num_full_block * BLOCKSIZE;
-	memcpy((struct block *)entries[num_full_block], data.addr[num_full_block], (int)byte_in_block);
-
-	return 0;
+	return read_file_by_inode(dir_inode, *entries);
 }
 
 // char *read_filename_from_inode(struct file_entry *file) {

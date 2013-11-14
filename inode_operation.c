@@ -14,13 +14,17 @@ void read_inode(uint inode, struct inode *inode_buf) {
     //error: curr_inode and curr_block are not updated;
     if(inode != curr_inode_num) {
         curr_inode_num = inode;
-        int block_index = (inode - 1) / INODES_PER_BLOCK + 2;
+        int block_index = ((inode - 1) / INODES_PER_BLOCK) + 2;
         int inode_offset = (inode - 1) % INODES_PER_BLOCK;
         int byte_offset = inode_offset * INODESIZE;
 
         if(block_index != curr_block_num) {
             curr_block_num = block_index;
             read_block(block_index, &curr_block, BLOCKSIZE);
+        }
+        if(inode == 129) {
+            DEBUG("INODES_PER_BLOCK = %d\n", BLOCKSIZE/INODESIZE);
+            DEBUG("This is it\n");
         }
         memcpy(&curr_inode, &curr_block + byte_offset, INODESIZE);
     }

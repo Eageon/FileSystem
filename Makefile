@@ -1,11 +1,11 @@
 # Author Jun Yu
 
-EXECUTABLE := faccess
+EXECUTABLE := initfs
 LIBS := pthread
 CC := gcc
 LD := ld
 
-DEBUG_MODE := n
+DEBUG_MODE := y
 
 ifeq ($(DEBUG_MODE), y)
         DEBUG := -g

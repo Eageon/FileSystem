@@ -1,6 +1,7 @@
 #include "inode.h"
 #include "block.h"
 
+
 extern int curr_fd;
 extern struct super_block curr_superblock;
 struct block curr_block;
@@ -21,6 +22,9 @@ void read_inode(uint inode, struct inode *inode_buf) {
         if(block_index != curr_block_num) {
             curr_block_num = block_index;
             read_block(block_index, &curr_block, BLOCKSIZE);
+        }
+        if(inode == 2) {
+            DEBUG("This is it\n");
         }
         memcpy(&curr_inode, &curr_block + byte_offset, INODESIZE);
     }
@@ -43,17 +47,19 @@ void write_inode(uint inode, struct inode *inode_buf) {
     write_block(block_index, &curr_block, BLOCKSIZE);
 }
 
-void free_inode(uint free_inode) {
+int free_inode(uint free_inode) {
+    if(curr_superblock.ninode == MAX_SIZE)
+        return -1;
     int i;
-    if(curr_superblock.ninode == MAX_SIZE) 
-        return;
+
     curr_superblock.inode[curr_superblock.ninode] = i;
-    curr_superblock.ninode++; 
+    curr_superblock.ninode++;
+    return 0; 
 }
 
 uint allocate_inode() {
     if(curr_superblock.ninode == 0) 
-        initiate_inode_list(curr_superblock);
+        initiate_inode_list();
     curr_superblock.ninode--;
     uint inode_id = curr_superblock.inode[curr_superblock.ninode];
     return inode_id; 

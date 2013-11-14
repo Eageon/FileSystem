@@ -4,6 +4,8 @@
 
 int curr_fd;
 struct super_block curr_superblock;
+void initiate_inode_list();
+void print_superblock();
 void initiate_super_block(int fd, int total_block_number, int inode_block_number) {
     int i;
     curr_fd = fd;
@@ -20,9 +22,9 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
     memset(arr,0 ,sizeof(arr));
     for(i = 2; i <= max_inode_block; i++)
         write_block(i, arr, sizeof(arr)); 
-    initiate_inode_list(&curr_superblock);
+    initiate_inode_list();
      
-    write_superblock((void*)&curr_superblock);
+    write_superblock();
 
 }
 
@@ -36,6 +38,8 @@ void initiate_inode_list() {
         struct inode ino;
         read_inode(i, &ino);
         if(is_free_inode(&ino))
+            if(curr_superblock.ninode == MAX_SIZE) 
+                break; 
             free_inode(i);    
     }
     if(curr_superblock.ninode == 0){ 
@@ -63,13 +67,15 @@ int main(int argc, char** argv) {
          printf("Usage: initfs file_name(representing disk) n1(total number of blocks) n2(total number of blocks containing inodes)\n");
     }
 
-    curr_fd = open(argv[1], O_CREAT | O_RDWR);
+    curr_fd = open(argv[1], O_CREAT | O_RDWR, 0600);
     if (curr_fd == -1) {
         perror("File cannot be opened");
         exit(-1);
     }
     int n1 = atoi(argv[2]);
     int n2 = atoi(argv[3]);
+    lseek(curr_fd, n1 * 2048, SEEK_SET);
+    write(curr_fd," ",1);
     initiate_super_block(curr_fd, n1, n2);
     print_superblock();
     while(1)

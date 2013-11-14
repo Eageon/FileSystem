@@ -1,4 +1,8 @@
 #include "V6stdio.h"
+#include "file.h"
+
+struct V6_file curr_dir;
+
 int cpin(int argc, char** argv) {
     int src_fd, n, err;
     unsigned char buffer[2048];
@@ -129,7 +133,7 @@ int mkdir (int argc, char** argv) {
          exit(-1);
     }
 
-    uint curr_inode_number = find_directory_in_current_directory(argv[2]);
+    uint curr_inode_number = find_directory_in_directory(argv[2], &curr_dir);
     if (curr_inode_number != -1) {
         printf("Diretory %s exists! Can't override an existing file", argv[2]);
         return -1;

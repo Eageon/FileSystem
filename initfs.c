@@ -13,7 +13,7 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
     curr_superblock.fsize = total_block_number;
     curr_superblock.nfree = 0;
     curr_superblock.ninode = 0;
-    //free_block(&curr_superblock, 0);
+    free_block(0);
     uint max_inode_block = 1 + inode_block_number;
     for(i = curr_superblock.fsize - 1; i > max_inode_block; i--) {
         free_block(i);
@@ -53,13 +53,13 @@ void print_superblock() {
     printf("fsize: %d\n",curr_superblock.fsize);
     printf("nfree: %d\n",curr_superblock.nfree);
     int i;
-    for(i = 0; i<curr_superblock.nfree; i++){
-        printf("free %d: %d  ",i, curr_superblock.free[i]);
+    for(i = curr_superblock.nfree -1; i>=0; i--){
+        printf("free block %d: %d  ",i, curr_superblock.free[i]);
     }
     printf("\n");
     printf("ninode: %d\n",curr_superblock.ninode);
     for(i = 0; i<curr_superblock.nfree; i++){
-        printf("free %d: %d  ",i, curr_superblock.inode[i]);
+        printf("free inode %d: %d  ",i, curr_superblock.inode[i]);
     }
 }
 int main(int argc, char** argv) {
@@ -78,8 +78,9 @@ int main(int argc, char** argv) {
     write(curr_fd," ",1);
     initiate_super_block(curr_fd, n1, n2);
     print_superblock();
-    while(1)
-        printf("allocated block: %d\n", allocate_block());
+    int allocated_block;
+    while(allocated_block = allocate_block())
+        printf("allocated block: %d\n", allocated_block);
     int i;
     for(i = n2+2; i<n1; i++) {
         free_block(i);

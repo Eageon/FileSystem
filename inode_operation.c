@@ -26,7 +26,7 @@ void read_inode(uint inode, struct inode *inode_buf) {
         if(inode == 2) {
             DEBUG("This is it\n");
         }
-        memcpy(&curr_inode, &curr_block + byte_offset, INODESIZE);
+        memcpy((void *)&curr_inode, (void *)&curr_block + byte_offset, INODESIZE);
     }
     inode_buf = &curr_inode;
 }
@@ -43,16 +43,14 @@ void write_inode(uint inode, struct inode *inode_buf) {
         curr_block_num = block_index;
         read_block(block_index, &curr_block, BLOCKSIZE);
     }
-    memcpy(&curr_block + byte_offset, &curr_inode, INODESIZE);
+    memcpy((void *)&curr_block + byte_offset, (void *)&curr_inode, INODESIZE);
     write_block(block_index, &curr_block, BLOCKSIZE);
 }
 
 int free_inode(uint free_inode) {
     if(curr_superblock.ninode == MAX_SIZE)
         return -1;
-    int i;
-
-    curr_superblock.inode[curr_superblock.ninode] = i;
+    curr_superblock.inode[curr_superblock.ninode] = free_inode;
     curr_superblock.ninode++;
     return 0; 
 }

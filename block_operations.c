@@ -56,10 +56,13 @@ ssize_t write_block(int block, void *buf, size_t count) {
 void free_block(uint free_block) {
     if(curr_superblock.nfree ==  MAX_SIZE) {
         struct head_free_block w;
+        struct head_free_block w2;
+
         //int i;
         w.nfr = curr_superblock.nfree;
         memcpy(w.fr, curr_superblock.free, curr_superblock.nfree * sizeof(uint));
-        write_block(free_block, (void*)&w, (curr_superblock.nfree + 1) * sizeof(uint)); //write nfree and free array into block i;
+        write_block(free_block, (void*)&w, BLOCKSIZE); //write nfree and free array into block i;
+        read_block(free_block, (void*)&w2, BLOCKSIZE);
         curr_superblock.nfree = 0;
     }
     curr_superblock.free[curr_superblock.nfree++] = free_block;    
@@ -76,7 +79,7 @@ uint allocate_block() {
     if(curr_superblock.nfree == 0) {
         struct head_free_block w;
         //int i;
-        read_block(block_id, (void*)&w, curr_superblock.nfree * sizeof(uint));
+        read_block(block_id, (void*)&w, BLOCKSIZE);
         curr_superblock.nfree = w.nfr;
         memcpy(curr_superblock.free, w.fr, (curr_superblock.nfree + 1) * sizeof(uint));
     }

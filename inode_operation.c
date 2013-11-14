@@ -55,7 +55,7 @@ int free_inode(uint free_inode) {
     return 0; 
 }
 
-uint allocate_inode() {
+uint get_free_inode() {
     if(curr_superblock.ninode == 0) 
         return -1;
     curr_superblock.ninode--;

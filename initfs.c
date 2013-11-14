@@ -1,11 +1,3 @@
-#include "common.h" 
-#include "block.h" 
-#include "inode.h"
-
-extern int curr_fd;
-extern struct super_block curr_superblock;
-void initiate_inode_list();
-void print_superblock();
 void initiate_super_block(int fd, int total_block_number, int inode_block_number) {
     int i;
     curr_fd = fd;
@@ -62,14 +54,14 @@ void print_superblock() {
         printf("free inode %d: %d  ",i, curr_superblock.inode[i]);
     }
 }
-int main(int argc, char** argv) {
+int initfs(int argc, char** argv) {
     if(argc < 4) {
          printf("Usage: initfs file_name(representing disk) n1(total number of blocks) n2(total number of blocks containing inodes)\n");
     }
 
     curr_fd = open(argv[1], O_CREAT | O_RDWR, 0600);
     if (curr_fd == -1) {
-        perror("File cannot be opened");
+        perror("disk cannot be allocated");
         exit(-1);
     }
     int n1 = atoi(argv[2]);

@@ -24,6 +24,9 @@ struct inode_data {
 void read_inode(uint inode, struct inode *inode_buf);
 void write_inode(uint inode, struct inode *inode_buf);
 int free_inode(uint free_inode);
-uint allocate_inode();
+uint get_free_inode();  //replace allocate_inode()
 int is_free_inode(struct inode* ino);
+size_t read_file(char *filename, void *buf);
+size_t write_file(char *filename, void *buf, size_t count);
+
 #endif

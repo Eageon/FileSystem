@@ -59,7 +59,7 @@ int free_inode(uint free_inode) {
 
 uint allocate_inode() {
     if(curr_superblock.ninode == 0) 
-        initiate_inode_list();
+        return -1;
     curr_superblock.ninode--;
     uint inode_id = curr_superblock.inode[curr_superblock.ninode];
     return inode_id; 

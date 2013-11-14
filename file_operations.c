@@ -3,14 +3,11 @@
 #include "inode.h"
 #include "block.h"
 
-struct V6_file curr_file;
 struct V6_file curr_dir;
-extern struct inode curr_inode;
-extern uint curr_inode_num;
 
 int read_file_by_inode(struct inode *file_inode, byte* buf) {
-	struct inode inode;
-    read_inode(curr_file.inumber, &inode);
+    struct inode inode;
+    read_inode(file_inode.inumber, &inode);
     if(inode.flags | 0100000 == 0 ) {
        	ERROR("Interna: error: not a");
     }

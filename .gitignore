@@ -19,9 +19,7 @@ initfs
 *.out
 *.app
 
-*.c~
-*.h~
-.gitignore~
+*~
 *.swp
 *.swo
 *.orig

@@ -1,4 +1,7 @@
 #include "v6util.h"
+#include "block.h" 
+#include "inode.h"
+#include "file.h"
 
 extern struct V6_file root;
 
@@ -21,14 +24,15 @@ int initfs(int argc, char** argv) {
     initiate_super_block(curr_fd, n1, n2);
     make_root_directory();   
     print_superblock();
-    //int allocated_block;
-  //  while(allocated_block = allocate_block())
-    //    printf("allocated block: %d\n", allocated_block);
+ /*   int allocated_block;
+    while(allocated_block = allocate_block())
+        printf("allocated block: %d\n", allocated_block);
     int i;
     for(i = n2+2; i<n1; i++) {
         free_block(i);
     }
     print_superblock();
+    */
     close(curr_fd);
     return 0;
 }

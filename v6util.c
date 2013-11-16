@@ -21,7 +21,7 @@ int initfs(int argc, char** argv) {
     initiate_super_block(curr_fd, n1, n2);
     make_root_directory();   
     print_superblock();
-    int allocated_block;
+    //int allocated_block;
   //  while(allocated_block = allocate_block())
     //    printf("allocated block: %d\n", allocated_block);
     int i;
@@ -37,7 +37,7 @@ int initfs(int argc, char** argv) {
 int cpin(int argc, char** argv) {
     int src_fd, n, err;
     unsigned char buffer[2048];
-    char * src_path, dst_path;
+    char * src_path, *dst_path;
     
     // Assume that the program takes two arguments the source path followed
     // by destination file name.
@@ -51,7 +51,7 @@ int cpin(int argc, char** argv) {
          exit(-1);
     }
 
-    uint curr_inode_number = find_file_in_current_directory(argv[2]);
+    uint curr_inode_number = find_file_in_directory(argv[2], &root);
     if (curr_inode_number != -1) {
         printf("Filename %s exists! Can't override an existing file", argv[2]);
         return -1;
@@ -88,7 +88,7 @@ int cpin(int argc, char** argv) {
 int cpout(int argc, char** argv) {
     int dst_fd, n, err;
     unsigned char buffer[4096];
-    char* src_path, dst_path;
+    char* src_path, *dst_path;
     
     // Assume that the program takes two arguments the source path followed
     // by destination file name.
@@ -101,7 +101,7 @@ int cpout(int argc, char** argv) {
          perror("disk doesn't exist!\n");
          exit(-1);
     }
-    uint curr_inode_number = find_file_in_current_directory(argv[2]);
+    uint curr_inode_number = find_file_in_directory(argv[2], &root);
     if (curr_inode_number != -1) {
         printf("filename %s exists! Can't override an existing file", argv[2]);
         return -1;

@@ -31,4 +31,5 @@ uint get_free_inode();  //replace allocate_inode()
 int is_free_inode(struct inode* ino);
 inline int allocate_inode_by_number(uint inode);
 inline int allocate_inode(struct inode *file_inode);
+inline int check_allocation(struct inode *file_inode);
 #endif

@@ -31,7 +31,7 @@ int main() {
             else if(strcmp(argv[0], "mkdir") == 0)
                 makdir(argc,argv);
             else if(strcmp(argv[0], "ls") == 0)
-                ls(argv[0],argv);
+                ls(argc,argv);
             else {
                 printf("Error: unsupported operations!\nThis File System only support cpin, cpout, makdir and ls\n");
             }

@@ -119,7 +119,8 @@ void initiate_inode_list() {
     uint max_inode_block = 1 + curr_superblock.isize;
     for(i = 2; i <= max_inode_block; i++)
         write_block(i, arr, sizeof(arr));
-
+    int brr[512];
+    read_block(20,brr,512);
     uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
     for(i = 2; i < inode_number; i++) {
         if(curr_superblock.ninode == MAX_SIZE) 

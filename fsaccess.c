@@ -24,12 +24,14 @@ int main() {
         if(argv[0] != '\0') { 
             if(strcmp(argv[0], "cpin") == 0)
                 cpin(argc, argv);
+            else if(strcmp(argv[0], "initfs") == 0)
+                initfs(argc,argv);
             else if(strcmp(argv[0], "cpout") == 0)
                 cpout(argc,argv);
             else if(strcmp(argv[0], "mkdir") == 0)
                 makdir(argc,argv);
             else if(strcmp(argv[0], "ls") == 0)
-                ls(argv[0],argv);
+                ls(argc,argv);
             else {
                 printf("Error: unsupported operations!\nThis File System only support cpin, cpout, makdir and ls\n");
             }

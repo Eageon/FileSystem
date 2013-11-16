@@ -1,5 +1,7 @@
 #include "v6util.h"
 
+extern struct V6_file root;
+
 
 int initfs(int argc, char** argv) {
     if(argc < 4) {
@@ -19,9 +21,9 @@ int initfs(int argc, char** argv) {
     initiate_super_block(curr_fd, n1, n2);
     make_root_directory();   
     print_superblock();
-    int allocated_block;
-    while(allocated_block = allocate_block())
-        printf("allocated block: %d\n", allocated_block);
+    //int allocated_block;
+  //  while(allocated_block = allocate_block())
+    //    printf("allocated block: %d\n", allocated_block);
     int i;
     for(i = n2+2; i<n1; i++) {
         free_block(i);
@@ -35,7 +37,7 @@ int initfs(int argc, char** argv) {
 int cpin(int argc, char** argv) {
     int src_fd, n, err;
     unsigned char buffer[2048];
-    char * src_path, dst_path;
+    char * src_path, *dst_path;
     
     // Assume that the program takes two arguments the source path followed
     // by destination file name.
@@ -49,7 +51,7 @@ int cpin(int argc, char** argv) {
          exit(-1);
     }
 
-    uint curr_inode_number = find_file_in_current_directory(argv[2]);
+    uint curr_inode_number = find_file_in_directory(argv[2], &root);
     if (curr_inode_number != -1) {
         printf("Filename %s exists! Can't override an existing file", argv[2]);
         return -1;
@@ -80,12 +82,13 @@ int cpin(int argc, char** argv) {
     }
     close(src_fd);
     //close(dst_fd);
+    return 0;
 }
 
 int cpout(int argc, char** argv) {
-    int src_fd, n, err;
+    int dst_fd, n, err;
     unsigned char buffer[4096];
-    char* src_path, dst_path;
+    char* src_path, *dst_path;
     
     // Assume that the program takes two arguments the source path followed
     // by destination file name.
@@ -98,7 +101,7 @@ int cpout(int argc, char** argv) {
          perror("disk doesn't exist!\n");
          exit(-1);
     }
-    uint curr_inode_number = find_file_in_current_directory(argv[2]);
+    uint curr_inode_number = find_file_in_directory(argv[2], &root);
     if (curr_inode_number != -1) {
         printf("filename %s exists! Can't override an existing file", argv[2]);
         return -1;
@@ -128,13 +131,14 @@ int cpout(int argc, char** argv) {
     }
     //close(src_fd);
     close(dst_fd);
+    return 0;
 }
 
 
-int mkdir (int argc, char** argv) {
+int makdir (int argc, char** argv) {
     char* dir_name;
     if(argc != 2) {
-         printf("Usage: mkdir V6-directory\n");
+         printf("Usage: makdir V6-directory\n");
          exit(-1);
     }
 
@@ -143,13 +147,14 @@ int mkdir (int argc, char** argv) {
          exit(-1);
     }
 
-    uint curr_inode_number = find_directory_in_directory(argv[2], &curr_dir);
+    uint curr_inode_number = find_directory_in_directory(argv[2], &root);
     if (curr_inode_number != -1) {
         printf("Diretory %s exists! Can't override an existing file", argv[2]);
         return -1;
     }
     dir_name =  argv[1];
-    mkdir(dir_name);
+    make_directory_in_directory(dir_name, &root);
+    return 0;
 }
 
 int ls(int argc, char** argv) {
@@ -163,11 +168,12 @@ int ls(int argc, char** argv) {
          perror("disk doesn't exist!\n");
          exit(-1);
     }
-    int file_count = list_directory(all_files_in_curr_diretory,&curr_dir);
+    int file_count = list_directory(all_files_in_curr_diretory,&root);
     int i;
     for(i = 0; i < file_count; i++) {
         printf("%d.%s",i+1,all_files_in_curr_diretory[i]);
     }
+    return 0;
 }
 
 

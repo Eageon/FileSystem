@@ -1,4 +1,9 @@
+#include "common.h"
 #include "block.h"
+#include "inode.h"
+
+void initiate_free_list();
+void initiate_inode_list();
 
 int curr_fd;
 struct super_block curr_superblock;
@@ -62,7 +67,8 @@ void free_block(uint free_block) {
         write_block(free_block, (void*)&w, BLOCKSIZE); //write nfree and free array into block i;
         curr_superblock.nfree = 0;
     }
-    curr_superblock.free[curr_superblock.nfree++] = free_block;    
+    curr_superblock.free[curr_superblock.nfree++] = free_block;
+    write_superblock();
 }
 
 
@@ -80,11 +86,11 @@ uint allocate_block() {
         curr_superblock.nfree = w.nfr;
         memcpy(curr_superblock.free, w.fr, (curr_superblock.nfree + 1) * sizeof(uint));
     }
+	write_superblock();
     return block_id;
 }
 
 void initiate_super_block(int fd, int total_block_number, int inode_block_number) {
-    int i;
     curr_fd = fd;
     curr_superblock.isize = inode_block_number;
     curr_superblock.fsize = total_block_number;
@@ -98,6 +104,7 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
 void initiate_free_list() {
     free_block(0);
     uint max_inode_block = 1 + curr_superblock.isize;
+    int i;
     for(i = curr_superblock.fsize - 1; i > max_inode_block; i--) {
         free_block(i);
     }
@@ -107,10 +114,13 @@ void initiate_inode_list() {
 
     int arr[512];
     memset(arr,0 ,sizeof(arr));
-    for(i = 2; i <= max_inode_block; i++)
-        write_block(i, arr, sizeof(arr)); 
-    uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
     int i;
+
+    uint max_inode_block = 1 + curr_superblock.isize;
+    for(i = 2; i <= max_inode_block; i++)
+        write_block(i, arr, sizeof(arr));
+
+    uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
     for(i = 2; i < inode_number; i++) {
         if(curr_superblock.ninode == MAX_SIZE) 
             break;

@@ -16,6 +16,6 @@ int curr_fd;
 int initfs(int argc, char** argv);
 int cpin(int argc, char** argv);
 int cpout(int argc, char** argv);
-int mkdir(int argc, char** argv);
+int makdir(int argc, char** argv);
 int ls(int argc, char** argv);
 

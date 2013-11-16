@@ -127,10 +127,10 @@ void initiate_inode_list() {
             break;
         struct inode ino;
         read_inode(i, &ino);
-        if(is_free_inode(&ino))
-            if(curr_superblock.ninode == MAX_SIZE) 
-                break; 
+        if(is_free_inode(&ino)) {
+            printf("%d", i);
             free_inode(i);    
+        }
     }
     if(curr_superblock.ninode == 0){ 
         fprintf(stderr,"Error: the inode blocks are full, allocation falure!");

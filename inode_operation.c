@@ -1,6 +1,4 @@
 #include "inode.h"
-#include "block.h"
-
 
 extern int curr_fd;
 extern struct super_block curr_superblock;

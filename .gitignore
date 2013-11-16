@@ -12,9 +12,11 @@
 *.so
 *.so.*
 *.dylib
+*.gch
 
 # Executables
 initfs
+fsaccess
 *.exe
 *.out
 *.app

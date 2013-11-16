@@ -8,7 +8,7 @@ void initiate_inode_list();
 int curr_fd;
 struct super_block curr_superblock;
 struct block curr_block;
-struct block curr_block_num;
+uint curr_block_num;
   
 inline void write_superblock() {
         int bytes = 0;
@@ -19,11 +19,11 @@ inline void write_superblock() {
 }
 
 
-ssize_t read_block(int block, void* buf, size_t count) {
+ssize_t read_block(uint block_index, void* buf, size_t count) {
         int bytes = 0;
         if(count > BLOCKSIZE)
                 return -1;
-        int offset = block * BLOCKSIZE;
+        int offset = block_index * BLOCKSIZE;
 
         if(block_index == curr_block_num) {
             memcpy(buf, curr_block.data, BLOCKSIZE);
@@ -33,12 +33,12 @@ ssize_t read_block(int block, void* buf, size_t count) {
         curr_block_num = block_index;       
         int offs = 0;
         if((offs = lseek(curr_fd, offset, SEEK_SET)) < 0) {
-            fprintf(stderr, "Error in seek block %d\n", block);
+            fprintf(stderr, "Error in seek block %d\n", block_index);
             exit(errno);
         }
 
         if((bytes = read(curr_fd, (void *)(curr_block.data), count)) < 0) {
-            fprintf(stderr, "Error in read block %d\n", block);
+            fprintf(stderr, "Error in read block %d\n", block_index);
             exit(errno);
         }
         memcpy(buf, curr_block.data, BLOCKSIZE);
@@ -46,10 +46,10 @@ ssize_t read_block(int block, void* buf, size_t count) {
         return bytes;
 }
 
-ssize_t write_block(int block, void *buf, size_t count) {
+ssize_t write_block(uint block_index, void *buf, size_t count) {
         if(count > BLOCKSIZE)
                 return -1;
-        int offset = block * BLOCKSIZE;
+        int offset = block_index * BLOCKSIZE;
 
         if(block_index != curr_block_num) {
             memcpy(curr_block.data, buf, BLOCKSIZE);
@@ -58,13 +58,13 @@ ssize_t write_block(int block, void *buf, size_t count) {
         curr_block_num = block_index;
         int offs = 0;
         if((offs = lseek(curr_fd, offset, SEEK_SET)) < 0) {
-                fprintf(stderr, "Error in seek block %d\n", block);
+                fprintf(stderr, "Error in seek block %d\n", block_index);
                 exit(errno);
         }
 
         int bytes = 0;
         if((bytes = write(curr_fd, curr_block.data, count)) < 0) {
-                fprintf(stderr, "Error in read block %d\n", block);
+                fprintf(stderr, "Error in read block %d\n", block_index);
                 exit(errno);
         }
 

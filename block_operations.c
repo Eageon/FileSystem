@@ -138,12 +138,12 @@ void initiate_inode_list() {
     read_block(20,brr,512);
 
     uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
-    for(i = 2; i < inode_number; i++) {
+    for(i = 2; i <= inode_number; i++) {
         if(curr_superblock.ninode == MAX_SIZE) 
             break;
         struct inode ino;
         read_inode(i, &ino);
-        if(is_free_inode(&ino)) {
+        if(check_allocation(&ino) != 1) {
             printf("%d", i);
             free_inode(i);    
         }

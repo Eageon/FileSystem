@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define INODE_ADDR_LEN 20
+
 struct inode {
     ushort flags;
     char nlinks;

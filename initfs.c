@@ -20,7 +20,7 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
     make_root_directory();   
 
 }
-int make_root_directory();
+
 
 void initiate_inode_list() {
 
@@ -71,7 +71,7 @@ int initfs(int argc, char** argv) {
     lseek(curr_fd, n1 * 2048, SEEK_SET);
     write(curr_fd," ",1);
     initiate_super_block(curr_fd, n1, n2);
-    print_superblock();
+    //print_superblock();
     int allocated_block;
     while(allocated_block = allocate_block())
         printf("allocated block: %d\n", allocated_block);
@@ -79,7 +79,7 @@ int initfs(int argc, char** argv) {
     for(i = n2+2; i<n1; i++) {
         free_block(i);
     }
-    print_superblock();
+    //print_superblock();
     close(curr_fd);
     return 0;
 }

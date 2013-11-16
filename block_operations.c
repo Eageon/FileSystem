@@ -1,12 +1,13 @@
 #include "common.h"
 #include "block.h"
 
-extern int curr_fd;
+int curr_fd;
 extern struct super_block curr_superblock;
 
 inline void write_superblock() {
+        curr_fd = fd;
         int bytes = 0;
-        if((bytes = write(curr_fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
+        if((bytes = write(fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
                 fprintf(stderr, "Error in write th superblock errno = %d\n", -bytes);
                 exit(errno);
         }
@@ -63,7 +64,8 @@ void free_block(uint free_block) {
         write_block(free_block, (void*)&w, BLOCKSIZE); //write nfree and free array into block i;
         curr_superblock.nfree = 0;
     }
-    curr_superblock.free[curr_superblock.nfree++] = free_block;    
+    curr_superblock.free[curr_superblock.nfree++] = free_block;
+    write_superblock();
 }
 
 
@@ -81,5 +83,6 @@ uint allocate_block() {
         curr_superblock.nfree = w.nfr;
         memcpy(curr_superblock.free, w.fr, (curr_superblock.nfree + 1) * sizeof(uint));
     }
+    write_superblock();
     return block_id;
 }

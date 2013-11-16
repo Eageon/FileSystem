@@ -2,12 +2,11 @@
 #include "block.h"
 
 int curr_fd;
-extern struct super_block curr_superblock;
-
+struct super_block curr_superblock;
+  
 inline void write_superblock() {
-        curr_fd = fd;
         int bytes = 0;
-        if((bytes = write(fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
+        if((bytes = write(curr_fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
                 fprintf(stderr, "Error in write th superblock errno = %d\n", -bytes);
                 exit(errno);
         }
@@ -83,6 +82,65 @@ uint allocate_block() {
         curr_superblock.nfree = w.nfr;
         memcpy(curr_superblock.free, w.fr, (curr_superblock.nfree + 1) * sizeof(uint));
     }
-    write_superblock();
+	write_superblock();
     return block_id;
+}
+
+void initiate_super_block(int fd, int total_block_number, int inode_block_number) {
+    int i;
+    curr_fd = fd;
+    curr_superblock.isize = inode_block_number;
+    curr_superblock.fsize = total_block_number;
+    curr_superblock.nfree = 0;
+    curr_superblock.ninode = 0;
+    initiate_free_list();
+    initiate_inode_list();
+    write_superblock();
+
+}
+void initiate_free_list() {
+    free_block(0);
+    uint max_inode_block = 1 + curr_superblock.isize;
+    for(i = curr_superblock.fsize - 1; i > max_inode_block; i--) {
+        free_block(i);
+    }
+}
+
+void initiate_inode_list() {
+
+    int arr[512];
+    memset(arr,0 ,sizeof(arr));
+    for(i = 2; i <= max_inode_block; i++)
+        write_block(i, arr, sizeof(arr)); 
+    uint inode_number = curr_superblock.isize * INODES_PER_BLOCK;
+    int i;
+    for(i = 2; i < inode_number; i++) {
+        if(curr_superblock.ninode == MAX_SIZE) 
+            break;
+        struct inode ino;
+        read_inode(i, &ino);
+        if(is_free_inode(&ino))
+            if(curr_superblock.ninode == MAX_SIZE) 
+                break; 
+            free_inode(i);    
+    }
+    if(curr_superblock.ninode == 0){ 
+        fprintf(stderr,"Error: the inode blocks are full, allocation falure!");
+        exit(-1);
+    }
+}
+
+void print_superblock() {
+    printf("isize: %d\n",curr_superblock.isize);
+    printf("fsize: %d\n",curr_superblock.fsize);
+    printf("nfree: %d\n",curr_superblock.nfree);
+    int i;
+    for(i = curr_superblock.nfree -1; i>=0; i--){
+        printf("free block %d: %d  ",i, curr_superblock.free[i]);
+    }
+    printf("\n");
+    printf("ninode: %d\n",curr_superblock.ninode);
+    for(i = 0; i<curr_superblock.nfree; i++){
+        printf("free inode %d: %d  ",i, curr_superblock.inode[i]);
+    }
 }

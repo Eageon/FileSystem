@@ -1,16 +1,13 @@
 #include "common.h"
-#include "initfs.h"
+#include "v6util.h"
 #define MAX 100
 
 
 void tokenize(char *string, char *token_list[], int *argc);
-void fork_execute(const char *path, char *const argv[]);
+//void fork_execute(const char *path, char *const argv[]);
+//int status;
 
-
-int curr_fd;
 char seps[] = " ,\t\n";
-int status;
-struct super_block curr_superblock;
 
 int main() {
     while(1) {
@@ -41,6 +38,29 @@ int main() {
      }
      return 0;
 }
+
+
+void tokenize(char *string, char *token_list[], int *argc)
+{
+    
+    /* Establish string and get the first token: */
+    char * token;
+    *argc = 0;
+    token = strtok(string, seps );
+    while( token != NULL )
+    {
+        /* While there are tokens in "string" */
+        token_list[*argc] = token;
+        (*argc)++;
+        /* Get next token: */
+        token = strtok( NULL, seps );
+    }
+    token_list[(*argc)++] = (char*)0; 
+}
+
+
+
+/*
 void fork_execute(const char *path, char *const argv[]){
     int child_pid; 
     if((child_pid = fork()) < 0 )
@@ -60,20 +80,4 @@ void fork_execute(const char *path, char *const argv[]){
             perror("wait error");                
     }
 }
-void tokenize(char *string, char *token_list[], int *argc)
-{
-    
-    /* Establish string and get the first token: */
-    char * token;
-    *argc = 0;
-    token = strtok(string, seps );
-    while( token != NULL )
-    {
-        /* While there are tokens in "string" */
-        token_list[*argc] = token;
-        (*argc)++;
-        /* Get next token: */
-        token = strtok( NULL, seps );
-    }
-    token_list[(*argc)++] = (char*)0; 
-}
+*/

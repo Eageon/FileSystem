@@ -153,8 +153,7 @@ int ls(int argc, char** argv) {
          perror("disk doesn't exist!\n");
          exit(-1);
     }
-    int file_count;
-    list_current_directory(all_files_in_curr_diretory,&file_count);
+    int file_count = list_directory(all_files_in_curr_diretory,&curr_dir);
     int i;
     for(i = 0; i < file_count; i++) {
         printf("%d.%s",i+1,all_files_in_curr_diretory[i]);

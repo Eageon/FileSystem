@@ -10,7 +10,6 @@ void fork_execute(const char *path, char *const argv[]);
 int curr_fd;
 char seps[] = " ,\t\n";
 int status;
-int curr_fd;
 struct super_block curr_superblock;
 
 int main() {
@@ -33,7 +32,7 @@ int main() {
             else if(strcmp(argv[0], "mkdir") == 0)
                 makdir(argc,argv);
             else if(strcmp(argv[0], "ls") == 0)
-                forrk_execute(argv[0],argv);
+                ls(argv[0],argv);
             else {
                 printf("Error: unsupported operations!\nThis File System only support cpin, cpout, makdir and ls\n");
             }

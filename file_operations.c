@@ -13,6 +13,16 @@ int add_directory_to_directory(struct file_entry *file, struct V6_file *spec_dir
 
 }
 
+
+int make_root_directory() {
+	struct inode root_inode;
+	read_inode(1, &root_inode);
+	allocate_inode(&root_inode);
+
+	add_directory_to_inode("/", &root_inode);
+	write_inode(1, &root_inode);
+}
+
 int add_directory_to_inode(struct file_entry *file, struct inode *dir_inode) {
 
 	int full_blocks = dir_inode->size / BLOCKSIZE;
@@ -258,10 +268,13 @@ uint find_file_in_current_directory(const char *filename) {
 	return find_file_in_directory(filename, &curr_dir);
 }
 
-int list_current_directory(char **all_filename, int *count) {
+int list_directory(char **all_filename, struct V6_file *spec_dir) {
 	struct file_entry *entries; //allocated in read_directory, you need to free it after use
 	int entry_num = 0;
-	read_directory(&curr_inode, &entries, &entry_num);
+	uint inode = spec_dir->inumber;
+	struct inode dir_inode;
+	read_inode(inode, &dir_inode);
+	read_directory(&dir_inode, &entries, &entry_num);
 
 	*count = entry_num;
 	int i = 0;
@@ -269,5 +282,5 @@ int list_current_directory(char **all_filename, int *count) {
 		strcpy(all_filename[i], entries[i].filename, FILENAME_LENGTH);
 	}
 
-	return 0;
+	return entry_num;
 }

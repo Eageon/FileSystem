@@ -35,6 +35,8 @@ ssize_t read_block(int block, void* buf, size_t count);
 ssize_t write_block(int block, void *buf, size_t count);
 void free_block(uint free_block); //add a freed block number to free array;
 uint allocate_block();   //return a freed block number
-    
+
+void initiate_super_block(int fd, int total_block_number, int inode_block_number); 
+void print_superblock();    
 #endif
 

@@ -164,7 +164,7 @@ void print_superblock() {
     }
     printf("\n");
     printf("ninode: %d\n",curr_superblock.ninode);
-    for(i = 0; i<curr_superblock.nfree; i++){
+    for(i = 0; i<curr_superblock.ninode; i++){
         printf("free inode %d: %d  ",i, curr_superblock.inode[i]);
     }
 }

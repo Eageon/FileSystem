@@ -17,8 +17,10 @@ void initiate_super_block(int fd, int total_block_number, int inode_block_number
     initiate_inode_list();
      
     write_superblock();
+    make_root_directory();   
 
 }
+int make_root_directory();
 
 void initiate_inode_list() {
 

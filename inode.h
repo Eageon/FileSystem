@@ -10,13 +10,14 @@ struct inode {
     char gid;
     char padding[3];
     uint size;
-    uint addr[21];
+    uint pos;    // file pointer
+    uint addr[20];
     long actime[2];
     long modtime[2];
 };
 
 struct inode_data {
-	uint addr[21];
+	uint addr[20];
 };
 
 #define INODESIZE sizeof(struct inode)

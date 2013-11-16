@@ -23,3 +23,5 @@ initfs
 *.swp
 *.swo
 *.orig
+*.sublime-project
+*.sublime-workspace

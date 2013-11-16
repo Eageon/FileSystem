@@ -16,6 +16,7 @@
 
 # Executables
 initfs
+fsaccess
 *.exe
 *.out
 *.app

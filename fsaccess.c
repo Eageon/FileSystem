@@ -24,6 +24,8 @@ int main() {
         if(argv[0] != '\0') { 
             if(strcmp(argv[0], "cpin") == 0)
                 cpin(argc, argv);
+            else if(strcmp(argv[0], "initfs") == 0)
+                initfs(argc,argv);
             else if(strcmp(argv[0], "cpout") == 0)
                 cpout(argc,argv);
             else if(strcmp(argv[0], "mkdir") == 0)

@@ -1,4 +1,5 @@
 #include "inode.h"
+#include "block.h"
 
 //extern int curr_fd;
 extern struct super_block curr_superblock;
@@ -7,6 +8,31 @@ uint curr_block_num;
 //struct inode curr_inode;
 //uint curr_inode_num;
 
+
+inline int allocate_inode_by_number(uint inode) {
+    struct inode file_inode;
+    read_inode(inode, &file_inode);
+    int ret = allocate_inode(&file_inode);
+    write_inode(inode, &file_inode);
+    return ret;
+}
+
+// inline uint get_and_allocate_inode(struct inode *out_inode) {
+    
+    
+//  if(check_allocation(out_inode) == 1)
+//      return -1;
+
+//  allocate_inode(out_inode);
+//  return inode;
+// }
+
+inline int allocate_inode(struct inode *file_inode) {
+    if(check_allocation(file_inode) != 0)
+        return -1;
+    file_inode->flags |= 0100000;
+    return 0;
+}
 
 void read_inode(uint inode, struct inode *inode_buf) {
     //error: inode_offset may be negative
@@ -22,7 +48,7 @@ void read_inode(uint inode, struct inode *inode_buf) {
     if(inode == 2) {
         DEBUG("This is it\n");
     }
-    memcpy((void *)&curr_inode, (void *)&curr_block + byte_offset, INODESIZE);
+    memcpy((void *)inode_buf, (void *)&curr_block + byte_offset, INODESIZE);
 }
 
 void write_inode(uint inode, struct inode *inode_buf) {

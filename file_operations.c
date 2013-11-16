@@ -8,31 +8,32 @@
 //extern struct inode curr_inode;
 //extern uint curr_inode_num;
 
-// add .. to the new created entry
-int add_directory_to_directory(struct file_entry *file, struct V6_file *spec_dir) {
+struct V6_file root;
 
-}
 
 
 int make_root_directory() {
+
 	struct inode root_inode;
 	read_inode(1, &root_inode);
 	allocate_inode(&root_inode);
 	struct file_entry root_dir;
 	root_dir.inumber = 1;
-	root_dir.filename = "/";
+	root.inumber = 1;
+	strncpy(root.filename, (const char *)"/", 1);
 	add_entry_to_inode(&root_dir, &root_inode);
 	write_inode(1, &root_inode);
+	return 0;
 }
 
 int add_file_entry_to_directory(struct file_entry *file, struct inode *dir_inode) {
-
+	return 0;
 }
 
-int add_directory_to_inode(struct file_entry *dir_entry, struct file_entry *parent_dir_entry) {
+int add_directory_to_directory(struct file_entry *dir_entry, struct file_entry *parent_dir_entry) {
 	struct file_entry itself;
 	itself.inumber = dir_entry->inumber;
-	strcpy(itself.filename, ".", 1);
+	strncpy(itself.filename, ".", 1);
 	
 	struct file_entry parent;
 	if(dir_entry->inumber == 1) {
@@ -40,16 +41,16 @@ int add_directory_to_inode(struct file_entry *dir_entry, struct file_entry *pare
 	} else {
 		parent.inumber = parent_dir_entry->inumber;
 	}
-	strcpy(parent.filename, "..", 2);
+	strncpy(parent.filename, "..", 2);
 
-	struct inode the_dir;
-	struct inode parent_dir;
-	read_inode(dir_entry->inumber, &the_dir);
-	read_inode(parent_dir_entry, &parent_dir);
-	add_entry_to_inode(&itself, &the_dir);
-	add_entry_to_inode(&parent, &the_dir)
+	struct inode the_dir_inode;
+	struct inode parent_dir_inode;
+	read_inode(dir_entry->inumber, &the_dir_inode);
+	read_inode(parent_dir_entry, &parent_dir_inode);
+	add_entry_to_inode(&itself, &the_dir_inode);
+	add_entry_to_inode(&parent, &the_dir_inode);
 
-	return add_entry_to_inode(dir_entry, dir_inode);
+	return add_entry_to_inode(dir_entry, parent_dir_inode);
 }
 
 // add dir_inode to new created file
@@ -67,7 +68,7 @@ int add_entry_to_inode(struct file_entry *entry, struct inode *dir_inode) {
 	read_block(block_index, &last_block, BLOCKSIZE);
 	int extra_entry = (dir_inode->size % BLOCKSIZE) / FILE_ENTRY_SIZE;
 	
-	if(extra_entry == (BLOCKSIZE / FILE_ENTRY_SIZE)))
+	if(extra_entry == (BLOCKSIZE / FILE_ENTRY_SIZE))
 		return -1;  // block is full of file entry
 
 	memcpy((void *)&last_block + extra_entry * FILE_ENTRY_SIZE, entry, FILE_ENTRY_SIZE);
@@ -78,7 +79,7 @@ int add_entry_to_inode(struct file_entry *entry, struct inode *dir_inode) {
 
 // add . to the entry
 inline int create_empty_directory_entry(char *filename, struct inode *dir_inode) {
-
+	return 0;
 }
 
 uint make_directory_in_directory(char *filename, struct V6_file *spec_dir) {
@@ -88,56 +89,33 @@ uint make_directory_in_directory(char *filename, struct V6_file *spec_dir) {
 	struct inode dir_inode;
 	struct file_entry new_entry;
 	uint inode = get_free_inode();
-	read_inode(inode, dir_inode);
+	read_inode(inode, &dir_inode);
 	create_empty_directory_entry(filename, &new_entry);
 
-	add_directory_to_inode(&new_entry, &dir_inode);
+	add_entry_to_inode(&new_entry, spec_dir);
 	write_inode(inode, &dir_inode);
 
+	return inode;
 	// not write spec_dir to disk, it may be completed by upper call
 }
 
 // 1 if already allocated
 inline int check_allocation(struct inode *file_inode) {
-	if(file_inode->flags & 0100000 == 0)
+	if((file_inode->flags & 0100000) == 0)
 		return 1;
 	return 0;
 }
 
-inline int allocate_inode_by_number(uint inode) {
-	struct inode file_inode;
-	read_inode(inode, &file_inode);
-	int ret = allocate_inode(&file_inode);
-	write_inode(inode, &file_inode);
-	return ret;
-}
-
-// inline uint get_and_allocate_inode(struct inode *out_inode) {
-	
-	
-// 	if(check_allocation(out_inode) == 1)
-// 		return -1;
-
-// 	allocate_inode(out_inode);
-// 	return inode;
-// }
-
-inline int allocate_inode(struct inode *file_inode) {
-	if(check_allocation(file_inode) != 0)
-		return -1;
-	file_inode->flags |= 0100000;
-	return 0;
-}
 
 int read_file_by_inode(struct inode *file_inode, byte* buf) {
 	if(check_allocation(file_inode) == 0)
 		return -1;
 
-	struct inode inode;
-    read_inode(curr_file.inumber, &inode);
-    if(inode.flags & 0100000 == 0 ) {
-       	ERROR("Interna: error: not a");
-    }
+	// struct inode inode;
+ //    read_inode(curr_file.inumber, &inode);
+ //    if(inode.flags & 0100000 == 0 ) {
+ //       	ERROR("Interna: error: not a");
+ //    }
 
     struct inode_data data;
 	read_inode_data(file_inode, &data);
@@ -164,7 +142,7 @@ int write_file_by_inode(struct inode *file_inode, byte* buf, size_t count) {
 
 	struct inode_data data;
 	read_inode_data(file_inode, &data);
-	ensure_enough_blocks(file_inode, file_node->size + count);
+	ensure_enough_blocks(file_inode, file_inode->size + count);
 
 	int num_full_blocks = file_inode->size / BLOCKSIZE;
 	struct block tmp_block;
@@ -177,6 +155,7 @@ int write_file_by_inode(struct inode *file_inode, byte* buf, size_t count) {
 	int extra_byte_in_block = file_inode->size - num_full_blocks * BLOCKSIZE;
 	memcpy(tmp_block.data, buf + BLOCKSIZE * num_full_blocks, (int)extra_byte_in_block);
 	write_block(data.addr[num_full_blocks], &tmp_block, BLOCKSIZE);
+	return 0;
 }
 
 int ensure_enough_blocks(struct inode * file_inode, size_t total_size) {
@@ -196,16 +175,16 @@ int ensure_enough_blocks(struct inode * file_inode, size_t total_size) {
 	return 0;
 }
 
-inline uint filename_to_inode(char *filename, struct inode *file_inode) {
+inline uint filename_to_inode(char *filename, struct V6_file *curr_dir, struct inode *file_inode) {
 	int inode = find_file_in_directory(filename, curr_dir);
-	struct inode file_inode;
+	//struct inode file_inode;
 	read_inode(inode, &file_inode);
 	return inode;
 }
 
-size_t read_file(char *filename, void *buf) {
+size_t read_file(char *filename, void *buf, size_t count) {
 	struct inode file_inode;
-	int inode = filename_to_inode(filename, &file_inode);
+	int inode = filename_to_inode(filename, &root, &file_inode);
 	if(inode <  0)
 		return -1;
 
@@ -213,23 +192,29 @@ size_t read_file(char *filename, void *buf) {
 }
 
 size_t write_file(char *filename, void *buf, size_t count) {
-	struct inode file_niode;
+	struct V6_file file_inode;
 	//int inode = filename_to_inode(filename, &file_unode);
 	int inode = get_free_inode();
 	allocate_inode_by_number(inode);
+	struct inode dir_inode;
+	read_inode(root.inumber, &dir_inode);
+	add_entry_to_inode(&file_inode, &dir_inode);
+	file_inode.inumber = inode;
+	strncpy(file_inode.filename, filename, FILENAME_LENGTH);
 
 	return write_file_by_inode(&file_inode, buf, count);
 }
 
-uint current_directory(const char *filename) {
-	uint tmp_inode = find_file_in_current_directory(filename);
-	if(tmp_inode < 1) {
-		return -1;
-	}
-}
+// uint current_directory(const char *filename) {
+// 	uint tmp_inode = find_file_in_current_directory(filename);
+// 	if(tmp_inode < 1) {
+// 		return -1;
+// 	}
+// }
 
 inline int read_inode_data(struct inode *file_inode, struct inode_data *data) {
 	memcpy(data, file_inode->addr, sizeof(uint) * INODE_ADDR_LEN);
+	return 0;
 }
 
 //int read_inode_block(struct inode *file_inode, struct block *blocks) {
@@ -266,7 +251,7 @@ inline int is_directory(uint inode) {
 }
 
 inline int is_directory_inode(struct inode *file_inode) {
-	if(file_inode->flags & 040000 == 0)
+	if((file_inode->flags & 040000) == 0)
 		return 0;
 	return 1;
 }
@@ -290,16 +275,16 @@ uint find_directory_in_directory(const char *filename, struct V6_file *spec_dir)
 
 //return inode number 
 uint find_file_in_directory(const char *filename, struct V6_file *spec_dir) {
-	if(spec_dir.inumber != curr_inode_num) {
-		curr_inode_num = spec_dir.inumber;
-		read_inode(curr_inode_num, &curr_inode);
-	}
+	
+	struct inode curr_inode;
+	read_inode(spec_dir->inumber, &curr_inode);
+	
 
-	if(curr_inode.flags | 100000 == 0) {
+	if((curr_inode.flags | 100000) == 0) {
 		ERROR("Internal error: an existing file contains unallocated inode\n");
 	}
 
-	if(curr_inode.flags | 40000 == 0) {
+	if((curr_inode.flags | 40000) == 0) {
 		ERROR("Internal error: the current file is NOT directory\n");
 	}
 
@@ -321,7 +306,7 @@ uint find_file_in_directory(const char *filename, struct V6_file *spec_dir) {
 
 //return inode number
 uint find_file_in_current_directory(const char *filename) {
-	return find_file_in_directory(filename, &curr_dir);
+	return find_file_in_directory(filename, &root);
 }
 
 int list_directory(char **all_filename, struct V6_file *spec_dir) {
@@ -332,10 +317,10 @@ int list_directory(char **all_filename, struct V6_file *spec_dir) {
 	read_inode(inode, &dir_inode);
 	read_directory(&dir_inode, &entries, &entry_num);
 
-	*count = entry_num;
+	//*count = entry_num;
 	int i = 0;
 	for(i = 0; i < entry_num; i++) {
-		strcpy(all_filename[i], entries[i].filename, FILENAME_LENGTH);
+		strncpy(all_filename[i], (const char *)entries[i].filename, FILENAME_LENGTH);
 	}
 	free(entries);
 

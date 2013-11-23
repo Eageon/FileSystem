@@ -29,14 +29,13 @@ int main() {
             else if(strcmp(argv[0], "cpout") == 0)
                 cpout(argc,argv);
             else if(strcmp(argv[0], "mkdir") == 0)
-                makdir(argc,argv);
+                mkdir(argc,argv);
             else if(strcmp(argv[0], "ls") == 0)
                 ls(argc,argv);
             else {
                 printf("Error: unsupported operations!\nThis File System only support cpin, cpout, makdir and ls\n");
             }
         }
-
      }
      return 0;
 }
@@ -57,7 +56,7 @@ void tokenize(char *string, char *token_list[], int *argc)
         /* Get next token: */
         token = strtok( NULL, seps );
     }
-    token_list[(*argc)++] = (char*)0; 
+    token_list[(*argc)] = (char*)0; 
 }
 
 

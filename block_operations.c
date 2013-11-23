@@ -144,7 +144,6 @@ void initiate_inode_list() {
         struct inode ino;
         read_inode(i, &ino);
         if(check_allocation(&ino) != 1) {
-            printf("%d", i);
             free_inode(i);    
         }
     }

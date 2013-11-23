@@ -79,6 +79,7 @@ uint get_free_inode() {
            
 }
 
+
 // 1 if already allocated
 inline int check_allocation(struct inode *file_inode) {
     if((file_inode->flags & 0100000) == 1)

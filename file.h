@@ -34,10 +34,12 @@ int add_entry_to_inode(struct file_entry *entry, struct inode *dir_inode);
 inline int read_inode_data(struct inode *file_inode, struct inode_data *data);
 int ensure_enough_blocks(struct inode * file_inode, size_t total_size);
 
-int list_directory(char **all_filename, struct V6_file *spec_dir);
-int make_root_directory();
+int list_directory(char ***all_filename, struct V6_file *spec_dir);
+int make_root_directory(struct V6_file *root);
 
 inline int is_directory_inode(struct inode *file_inode);
+
+//int get_root_directory(struct V6_file *root);
 
 //int current_directory(const char *filename);
 //extern int read_directory(struct inode *dir_inode, struct file_entry *entries, int *entry_num);

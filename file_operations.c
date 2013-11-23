@@ -10,19 +10,29 @@
 
 struct V6_file root;
 
+// int get_root_directory(struct V6_file *root) {
+// 	root->inumber = 1;
+// 	strncpy(root->filename, "/", FILENAME_LENGTH);
+// 	return 1;
+// }
 
-
-int make_root_directory() {
+int make_root_directory(struct V6_file *_root) {
 
 	struct inode root_inode;
 	read_inode(1, &root_inode);
 	allocate_inode(&root_inode);
-	struct file_entry root_dir;
-	root_dir.inumber = 1;
-	root.inumber = 1;
-	strncpy((char *)root.filename, (const char *)"/", 1);
-	add_entry_to_inode(&root_dir, &root_inode);
+	_root->inumber = 1;
+	strncpy((char *)_root->filename, (const char *)"/", 1);
+	struct V6_file dot;
+	struct V6_file dotdot;
+	dot.inumber = 1;
+	dotdot.inumber = 1;
+	strncpy((char *)dot.filename, ".", FILENAME_LENGTH);
+	strncpy((char *)dotdot.filename, "..", FILENAME_LENGTH);
+	add_entry_to_inode(&dot, &root_inode);
+	add_entry_to_inode(&dotdot, &root_inode);
 	write_inode(1, &root_inode);
+	memcpy(&root, _root, sizeof(struct V6_file));
 	return 0;
 }
 
@@ -64,12 +74,17 @@ int add_entry_to_inode(struct file_entry *entry, struct inode *dir_inode) {
 
 
 	uint block_index = dir_inode->addr[full_blocks];
+	if(block_index == 0) {
+		block_index = allocate_block();
+		dir_inode->addr[full_blocks] = block_index; 
+	}
 	struct block last_block;
 	read_block(block_index, &last_block, BLOCKSIZE);
 	int extra_entry = (dir_inode->size % BLOCKSIZE) / FILE_ENTRY_SIZE;
 	
 	if(extra_entry == (BLOCKSIZE / FILE_ENTRY_SIZE))
 		return -1;  // block is full of file entry
+	dir_inode->size += FILE_ENTRY_SIZE;
 
 	memcpy((void *)&last_block + extra_entry * FILE_ENTRY_SIZE, entry, FILE_ENTRY_SIZE);
 	write_block(block_index, &last_block, BLOCKSIZE);
@@ -105,7 +120,7 @@ uint make_directory_in_directory(char *filename, struct V6_file *spec_dir) {
 
 
 int read_file_by_inode(struct inode *file_inode, void *buf) {
-	if(check_allocation(file_inode) == 0)
+	if(check_allocation(file_inode) != 0)
 		return -1;
 
 	// struct inode inode;
@@ -141,17 +156,18 @@ int write_file_by_inode(struct inode *file_inode, void *buf, size_t count) {
 	read_inode_data(file_inode, &data);
 	ensure_enough_blocks(file_inode, file_inode->size + count);
 
-	int num_full_blocks = file_inode->size / BLOCKSIZE;
+	int num_full_blocks = count / BLOCKSIZE;
 	struct block tmp_block;
+	memset(&tmp_block, 0, BLOCKSIZE);
 	int i;
 	for(i = 0; i < num_full_blocks; i++) {
 		memcpy(&tmp_block, buf + BLOCKSIZE * i, BLOCKSIZE);
-		write_block(data.addr[i], &tmp_block, BLOCKSIZE);
+		write_block(file_inode->addr[i], &tmp_block, BLOCKSIZE);
 	}
 
-	int extra_byte_in_block = file_inode->size - num_full_blocks * BLOCKSIZE;
+	int extra_byte_in_block = count - num_full_blocks * BLOCKSIZE;
 	memcpy(tmp_block.data, buf + BLOCKSIZE * num_full_blocks, (int)extra_byte_in_block);
-	write_block(data.addr[num_full_blocks], &tmp_block, BLOCKSIZE);
+	write_block(file_inode->addr[num_full_blocks], &tmp_block, BLOCKSIZE);
 	return 0;
 }
 
@@ -190,11 +206,15 @@ size_t read_file(char *filename, void *buf, size_t count) {
 
 size_t write_file(char *filename, void *buf, size_t count) {
 	struct V6_file file_entry;
+	
 	//int inode = filename_to_inode(filename, &file_unode);
 	struct inode file_inode;
+	memset(&file_inode, 0, INODESIZE);
 	int inode = get_free_inode();
+	read_inode(inode, &file_inode);
+
 	//read_inode(inode, &file_inode);
-	//allocate_inode_by_number(inode);
+	allocate_inode_by_number(inode);
 	struct inode dir_inode;
 	read_inode(root.inumber, &dir_inode);
 	
@@ -202,6 +222,7 @@ size_t write_file(char *filename, void *buf, size_t count) {
 	strncpy((char *)file_entry.filename, (const char *)filename, FILENAME_LENGTH);
 	
 	add_entry_to_inode(&file_entry, &dir_inode);
+	write_inode(root.inumber, &dir_inode);
 
 	return write_file_by_inode(&file_inode, buf, count);
 }
@@ -224,12 +245,16 @@ inline int read_inode_data(struct inode *file_inode, struct inode_data *data) {
 //}
 
 int read_directory(struct inode *dir_inode, struct file_entry **entries, int *entry_num) {
-	if(*entries == NULL)
-		return -1;
+	// if(*entries == NULL)
+	// 	return -1;
 
-	int ENTRY_NUM = dir_inode->size / FILE_ENTRY_SIZE; 
-	*entries = malloc(ENTRY_NUM * FILE_ENTRY_SIZE);
-	*entry_num = ENTRY_NUM;
+	*entry_num = dir_inode->size / FILE_ENTRY_SIZE; 
+	*entries = malloc((*entry_num) * FILE_ENTRY_SIZE);
+	// int i;
+	// for (i = 0; i < *entry_num; ++i)
+	// {
+	// 	entries[i] = malloc(FILE_ENTRY_SIZE);
+	// }
 
 	return read_file_by_inode(dir_inode, (void *)*entries);
 }
@@ -310,19 +335,25 @@ uint find_file_in_current_directory(const char *filename) {
 	return find_file_in_directory(filename, &root);
 }
 
-int list_directory(char **all_filename, struct V6_file *spec_dir) {
+int list_directory(char ***all_filename, struct V6_file *spec_dir) {
 	struct file_entry *entries; //allocated in read_directory, you need to free it after use
 	int entry_num = 0;
-	uint inode = spec_dir->inumber;
+	uint inode = root.inumber;
 	struct inode dir_inode;
 	read_inode(inode, &dir_inode);
 	read_directory(&dir_inode, &entries, &entry_num);
-
+ 	
 	//*count = entry_num;
+	*all_filename = malloc(FILENAME_LENGTH * entry_num);
 	int i = 0;
 	for(i = 0; i < entry_num; i++) {
-		strncpy(all_filename[i], (const char *)entries[i].filename, FILENAME_LENGTH);
+		(*all_filename)[i] = malloc(FILENAME_LENGTH);
+		strncpy((*all_filename)[i], (const char *)entries[i].filename, FILENAME_LENGTH);
 	}
+	// for (i = 0; i < entry_num; ++i)
+	// {
+	// 	free(entries[i]);
+	// }
 	free(entries);
 
 	return entry_num;

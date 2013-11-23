@@ -30,6 +30,9 @@ struct block {
 struct data_block {
     uint data[512];
 };
+
+extern int curr_fd;
+
 inline void write_superblock();
 ssize_t read_block(uint block, void* buf, size_t count);
 ssize_t write_block(uint block, void *buf, size_t count);

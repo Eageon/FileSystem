@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "file.h"
 
-extern struct V6_file root;
+struct V6_file root;
 
 
 int initfs(int argc, char** argv) {
@@ -22,7 +22,7 @@ int initfs(int argc, char** argv) {
     lseek(curr_fd, n1 * 2048, SEEK_SET);
     write(curr_fd," ",1);
     initiate_super_block(curr_fd, n1, n2);
-    make_root_directory();   
+    make_root_directory(&root); 
  //   print_superblock();
  /*   int allocated_block;
     while(allocated_block = allocate_block())
@@ -33,13 +33,14 @@ int initfs(int argc, char** argv) {
     }
     print_superblock();
     */
-    close(curr_fd);
+    
     return 0;
 }
 
 
 int cpin(int argc, char** argv) {
-    int src_fd, n, err;
+    int n, err;
+    int src_fd;
     unsigned char buffer[2048];
     char * src_path, *dst_path;
     
@@ -55,25 +56,35 @@ int cpin(int argc, char** argv) {
          exit(-1);
     }
 
-    uint curr_inode_number = find_file_in_directory(argv[2], &root);
-    if (curr_inode_number != -1) {
-        printf("Filename %s exists! Can't override an existing file", argv[2]);
-        return -1;
-    } 
+    //uint curr_inode_number = find_file_in_directory(argv[2], &root);
+    // if (curr_inode_number != -1) {
+    //     printf("Filename %s exists! You don't have write permission, so you can't override an existing file", argv[2]);
+    //     return -1;
+    // } 
 
     src_path = argv[1];
     dst_path = argv[2];
 
+
+    struct stat statbuf; 
     src_fd = open(src_path, O_RDONLY);
+    if (fstat(src_fd, &statbuf) == -1) {
+    /* check the value of errno */
+    }
+    int filelength = statbuf.st_size;
+
+    printf("file size %ld", statbuf.st_size);
     //dst_fd = open(dst_path, O_CREAT | O_WRONLY);
+    // fseek(src_fd, 0L, SEEK_END);
+    // int filelength = ftell(src_fd);
+    // fseek(src_fd, 0L, SEEK_SET);
 
-
-    while (1) {
+    /*while (1) {
         err = read(src_fd, buffer, 2048);
         if (err == -1) {
             perror("Error reading file.\n");
             exit(1);
-        }
+        }   
         n = err;
 
         if (n == 0) break;
@@ -85,6 +96,17 @@ int cpin(int argc, char** argv) {
         }
     }
     close(src_fd);
+    */
+    char *buf;
+    buf = malloc(filelength);
+    if (buf == 0)
+    {
+        printf("ERROR: Out of memory\n");
+        return -1;
+    }
+    int size = read(src_fd, buf, filelength);
+    write_file(dst_path, buf, size);
+    free(buf);
     //close(dst_fd);
     return 0;
 }
@@ -139,7 +161,7 @@ int cpout(int argc, char** argv) {
 }
 
 
-int makdir (int argc, char** argv) {
+int mkdir1 (int argc, char** argv) {
     char* dir_name;
     if(argc != 2) {
          printf("Usage: mkdir V6-directory\n");
@@ -162,7 +184,7 @@ int makdir (int argc, char** argv) {
 }
 
 int ls(int argc, char** argv) {
-    char* all_files_in_curr_diretory[64];
+    char** all_files_in_curr_diretory;
     if(argc != 1) {
          printf("Usage: ls\n");
          exit(-1);
@@ -172,11 +194,17 @@ int ls(int argc, char** argv) {
          perror("disk doesn't exist!\n");
          exit(-1);
     }
-    int file_count = list_directory(all_files_in_curr_diretory,&root);
+    int file_count = list_directory(&all_files_in_curr_diretory,&root);
     int i;
     for(i = 0; i < file_count; i++) {
-        printf("%d.%s",i+1,all_files_in_curr_diretory[i]);
+        printf("%s\t",all_files_in_curr_diretory[i]);
     }
+    printf("\n");
+    for (i = 0; i < file_count; ++i)
+    {
+        free(all_files_in_curr_diretory[i]);
+    }
+    free(all_files_in_curr_diretory);
     return 0;
 }
 
@@ -200,3 +228,4 @@ int ls(int argc, char** argv) {
         free(buf);
     }
     */
+

@@ -29,7 +29,7 @@ int main() {
             else if(strcmp(argv[0], "cpout") == 0)
                 cpout(argc,argv);
             else if(strcmp(argv[0], "mkdir") == 0)
-                mkdir(argc,argv);
+                mkdir1(argc,argv);
             else if(strcmp(argv[0], "ls") == 0)
                 ls(argc,argv);
             else {
@@ -37,6 +37,7 @@ int main() {
             }
         }
      }
+     close(curr_fd);
      return 0;
 }
 

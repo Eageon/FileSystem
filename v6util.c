@@ -23,7 +23,7 @@ int initfs(int argc, char** argv) {
     write(curr_fd," ",1);
     initiate_super_block(curr_fd, n1, n2);
     make_root_directory();   
-    print_superblock();
+ //   print_superblock();
  /*   int allocated_block;
     while(allocated_block = allocate_block())
         printf("allocated block: %d\n", allocated_block);
@@ -47,7 +47,7 @@ int cpin(int argc, char** argv) {
     // by destination file name.
     if(argc != 3) {
          printf("Usage: cpin external_file_name v6_file\n");
-         exit(-1);
+         return 1;
     }
 
     if (curr_fd == -1) {
@@ -98,7 +98,7 @@ int cpout(int argc, char** argv) {
     // by destination file name.
     if(argc != 3) {
          printf("Usage: cpin v6_file external_file_name\n");
-         exit(-1);
+         return 1; 
     }
 
     if (curr_fd == -1) {
@@ -142,7 +142,7 @@ int cpout(int argc, char** argv) {
 int makdir (int argc, char** argv) {
     char* dir_name;
     if(argc != 2) {
-         printf("Usage: makdir V6-directory\n");
+         printf("Usage: mkdir V6-directory\n");
          exit(-1);
     }
 

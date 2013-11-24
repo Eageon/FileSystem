@@ -49,12 +49,13 @@ uint make_directory_in_directory(char *filename, struct V6_file *spec_dir) {
 	uint inode = get_free_inode();
 	read_inode(inode, &dir_inode);
 	allocate_inode(&dir_inode);
+	write_inode(inode, &dir_inode);
 	strncpy((char *)new_entry.filename, (const char *)filename, FILENAME_LENGTH);
 	new_entry.inumber = inode;
 	//create_empty_directory_entry(filename, &new_entry);
 
 	add_directory_to_directory(&new_entry, &root);
-	write_inode(inode, &dir_inode);
+	
 
 	return inode;
 	// not write spec_dir to disk, it may be completed by upper call
@@ -62,10 +63,13 @@ uint make_directory_in_directory(char *filename, struct V6_file *spec_dir) {
 
 int add_directory_to_directory(struct file_entry *dir_entry, struct file_entry *parent_dir_entry) {
 	struct file_entry itself;
+	memset(&itself, 0, FILE_ENTRY_SIZE);
 	itself.inumber = dir_entry->inumber;
 	strncpy((char *)itself.filename, ".", 2);
 	
 	struct file_entry parent;
+	memset(&parent, 0, FILE_ENTRY_SIZE);
+
 	memcpy(&parent, parent_dir_entry, FILE_ENTRY_SIZE);
 	strncpy((char *)parent.filename, "..", 3);
 
@@ -79,7 +83,13 @@ int add_directory_to_directory(struct file_entry *dir_entry, struct file_entry *
 	add_entry_to_inode(&parent, &itself_dir_inode);
 	write_inode(dir_entry->inumber, &itself_dir_inode);
 
-	return add_entry_to_inode(dir_entry, &parent_dir_inode);
+	int ret = add_directory_to_inode(dir_entry, &parent_dir_inode);
+	write_inode(parent_dir_entry->inumber, &parent_dir_inode);
+	return ret;
+}
+
+inline int add_directory_to_inode(struct file_entry *dir_entry, struct inode *parent_dir_inode) {
+	return add_entry_to_inode(dir_entry, parent_dir_inode);
 }
 
 // add dir_inode to new created file

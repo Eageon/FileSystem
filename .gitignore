@@ -21,6 +21,8 @@ fsaccess
 *.out
 *.app
 
+jun*
+out*
 *~
 *.swp
 *.swo

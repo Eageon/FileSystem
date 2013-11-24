@@ -11,6 +11,12 @@ static struct block curr_block;
 static uint curr_block_num;
   
 inline void write_superblock() {
+        int offs = 0;
+        if((offs = lseek(curr_fd, sizeof(struct block), SEEK_SET)) < 0) {
+            fprintf(stderr, "Error in seek super block\n");   
+            exit(errno);
+        }
+
         int bytes = 0;
         if((bytes = write(curr_fd, &curr_superblock, sizeof(struct super_block)) < 0 )) {
                 fprintf(stderr, "Error in write th superblock errno = %d\n", -bytes);

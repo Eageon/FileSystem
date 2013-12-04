@@ -1,7 +1,6 @@
 /*
 * Name: Renkai Ji 
 * CS4348.HON
-* Due Date:  11:55pm, 12/03/13
 */
 
 I. Purpose

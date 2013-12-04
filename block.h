@@ -1,5 +1,5 @@
-#ifndef __BLOCK_FILESYSTEM__
-#define __BLOCK_FILESYSTEM__
+#ifndef __BLOCK_FILESYSTEM_RJ__
+#define __BLOCK_FILESYSTEM_RJ__
 #include "common.h"
 #define MAX_SIZE 251
 struct super_block {

@@ -1,4 +1,4 @@
-# Author Jun Yu
+# Author Renkai Ji 
 
 EXECUTABLE := fsaccess
 LIBS :=

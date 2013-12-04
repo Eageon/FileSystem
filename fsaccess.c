@@ -12,6 +12,7 @@ char seps[] = " ,\t\n";
 int main() {
     while(1) {
         char string[MAX];
+        fputs(">>>", stdout);
         fgets(string, MAX, stdin);
         int length = strlen(string) - 1;
         string[length] = '\0';

@@ -1,5 +1,5 @@
-#ifndef __FILES__FILESYSTEM_JUN__
-#define __FILES__FILESYSTEM_JUN__
+#ifndef __FILES__FILESYSTEM_RJ__
+#define __FILES__FILESYSTEM_RJ__
 
 #include "common.h"
 #include "inode.h"

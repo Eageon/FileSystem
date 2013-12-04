@@ -1,5 +1,5 @@
-#ifndef __UTIL_FILESYSTEM_RK__
-#define __UTIL_FILESYSTEM_RK__
+#ifndef __UTIL_FILESYSTEM_RJ__
+#define __UTIL_FILESYSTEM_RJ__
 /*
 dependent on:
   void list_current_directory(char *entry_names[],int* entry_number);

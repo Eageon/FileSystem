@@ -56,11 +56,11 @@ int cpin(int argc, char** argv) {
          exit(-1);
     }
 
-    //uint curr_inode_number = find_file_in_directory(argv[2], &root);
-    // if (curr_inode_number != -1) {
-    //     printf("Filename %s exists! You don't have write permission, so you can't override an existing file", argv[2]);
-    //     return -1;
-    // } 
+    uint curr_inode_number = find_file_in_directory(argv[2], &root2);
+    if (curr_inode_number != -1) {
+         printf("Filename %s exists! You are not allowed to override an existing file. Please change to another filename\n", argv[2]);
+         return -1;
+    } 
 
     src_path = argv[1];
     dst_path = argv[2];
@@ -129,7 +129,7 @@ int cpout(int argc, char** argv) {
     }
     uint curr_inode_number = find_file_in_directory(argv[2], &root2);
     if (curr_inode_number != -1) {
-        printf("filename %s exists! Can't override an existing file", argv[2]);
+        printf("filename %s doesn't exists! Please check your typing\n", argv[2]);
         return -1;
     } 
 
@@ -189,7 +189,7 @@ int mkdir1 (int argc, char** argv) {
 
     int curr_inode_number = find_directory_in_directory(argv[1], &root2);
     if (curr_inode_number != -1) {
-        printf("Diretory %s exists! Can't override an existing file", argv[1]);
+        printf("Diretory %s exists! Can't override an existing file\n", argv[1]);
         return -1;
     }
     dir_name =  argv[1];

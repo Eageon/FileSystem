@@ -4,7 +4,7 @@
 */
 
 I. Purpose
-(1)Redesin the file system to remove the file size limitation of Unix V6 file system. You can also redesign superblock, inode, and directory entries.
+(1)Redesin the file system to remove the file size limitation of Unix V6 file system. Redesign superblock, inode, and directory entries.
 (2)Design and develp a program called fsaccess which will allow a Unix user access to the modified Unix V6 file system. 
 
 
@@ -36,7 +36,7 @@ To execute, run:
 ./fsaccess
 
 Thereafter, you will go into my file server command line mode. 
-This version of File System only support cpin, cpout, makdir together with extra feature ls(buy 3 get 1 free)
+This version of File System only support cpin, cpout, makdir together with extra feature
 
 To use my file system, input the following command:
 
@@ -62,19 +62,19 @@ To use my file system, input the following command:
 
 IV. Sample output
 
->>>initfs ./disk 1000 300
->>>ls
+>initfs ./disk 1000 300
+>ls
 .       ..
->>>cpin test-file-in v6-file
->>>ls
+>cpin test-file-in v6-file
+>ls
 .       ..      v6-file
->>>cpout v6-file test-file-out
->>>ls
+>cpout v6-file test-file-out
+>ls
 .       ..      v6-file
->>>mkdir v6-dir
+>mkdir v6-dir
 >>>ls
 .       ..      v6-file v6-dir
->>>q
+>q
 
 After quit this program, you will see that an external file named "test-file-out" was created,
 and its contents are equal to v6-file and hence equal to the file "test-file-in".

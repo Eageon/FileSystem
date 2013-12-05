@@ -1,4 +1,3 @@
-
 Author: Renkai Ji an Jun Yu 
 
 
@@ -61,19 +60,19 @@ To use my file system, input the following command:
 
 IV. Sample output
 
->initfs ./disk 1000 300
->ls
+initfs ./disk 1000 300
+ls
 .       ..
->cpin test-file-in v6-file
->ls
+cpin test-file-in v6-file
+ls
 .       ..      v6-file
->cpout v6-file test-file-out
->ls
+cpout v6-file test-file-out
+ls
 .       ..      v6-file
->mkdir v6-dir
->>>ls
+mkdir v6-dir
+ls
 .       ..      v6-file v6-dir
->q
+q
 
 After quit this program, you will see that an external file named "test-file-out" was created,
 and its contents are equal to v6-file and hence equal to the file "test-file-in".

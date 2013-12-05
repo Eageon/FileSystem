@@ -1,6 +1,5 @@
 /*
-* Name: Renkai Ji 
-* CS4348.HON
+* Author: Renkai Ji an Jun Yu 
 */
 
 I. Purpose

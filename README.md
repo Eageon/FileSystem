@@ -60,19 +60,19 @@ To use my file system, input the following command:
 
 IV. Sample output
 
-initfs ./disk 1000 300
-ls
+1.initfs ./disk 1000 300
+2.ls
 .       ..
-cpin test-file-in v6-file
-ls
+3.cpin test-file-in v6-file
+4.ls
 .       ..      v6-file
-cpout v6-file test-file-out
-ls
+5.cpout v6-file test-file-out
+6.ls
 .       ..      v6-file
-mkdir v6-dir
-ls
+7.mkdir v6-dir
+8.ls
 .       ..      v6-file v6-dir
-q
+9.q
 
 After quit this program, you will see that an external file named "test-file-out" was created,
 and its contents are equal to v6-file and hence equal to the file "test-file-in".

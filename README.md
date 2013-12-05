@@ -1,6 +1,6 @@
-/*
-* Author: Renkai Ji an Jun Yu 
-*/
+
+Author: Renkai Ji an Jun Yu 
+
 
 I. Purpose
 (1)Redesin the file system to remove the file size limitation of Unix V6 file system. Redesign superblock, inode, and directory entries.

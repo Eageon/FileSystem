@@ -1,5 +1,5 @@
-#ifndef __BLOCK_FILESYSTEM__
-#define __BLOCK_FILESYSTEM__
+#ifndef __BLOCK_FILESYSTEM_RJ__
+#define __BLOCK_FILESYSTEM_RJ__
 #include "common.h"
 #define MAX_SIZE 251
 struct super_block {
@@ -30,9 +30,12 @@ struct block {
 struct data_block {
     uint data[512];
 };
+
+extern int curr_fd;
+
 inline void write_superblock();
-ssize_t read_block(int block, void* buf, size_t count);
-ssize_t write_block(int block, void *buf, size_t count);
+ssize_t read_block(uint block, void* buf, size_t count);
+ssize_t write_block(uint block, void *buf, size_t count);
 void free_block(uint free_block); //add a freed block number to free array;
 uint allocate_block();   //return a freed block number
 

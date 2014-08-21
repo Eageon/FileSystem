@@ -1,9 +1,10 @@
-# Author Jun Yu
+# Author Renkai Ji 
 
 EXECUTABLE := fsaccess
 LIBS :=
 CC := gcc
 LD := ld
+
 
 DEBUG_MODE := y
 

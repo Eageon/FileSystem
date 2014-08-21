@@ -3,8 +3,6 @@
 
 //extern int curr_fd;
 extern struct super_block curr_superblock;
-struct block curr_block;
-uint curr_block_num;
 //struct inode curr_inode;
 //uint curr_inode_num;
 
@@ -40,14 +38,10 @@ void read_inode(uint inode, struct inode *inode_buf) {
     int block_index = (inode - 1) / INODES_PER_BLOCK + 2;
     int inode_offset = (inode - 1) % INODES_PER_BLOCK;
     int byte_offset = inode_offset * INODESIZE;
+    struct block curr_block;
 
-    if(block_index != curr_block_num) {
-        curr_block_num = block_index;
-        read_block(block_index, &curr_block, BLOCKSIZE);
-    }
-    if(inode == 2) {
-        DEBUG("This is it\n");
-    }
+    read_block(block_index, &curr_block, BLOCKSIZE);
+    
     memcpy((void *)inode_buf, (void *)&curr_block + byte_offset, INODESIZE);
 }
 
@@ -55,13 +49,13 @@ void write_inode(uint inode, struct inode *inode_buf) {
     int block_index = (inode - 1) / INODES_PER_BLOCK + 2;
     int inode_offset = (inode -1) % INODES_PER_BLOCK;
     int byte_offset = inode_offset * INODESIZE;
+    struct block curr_block;
 
     //memcpy(&curr_inode, inode_buf, INODESIZE);
 
-    if(block_index != curr_block_num) {
-        curr_block_num = block_index;
-        read_block(block_index, &curr_block, BLOCKSIZE);
-    }
+    
+    read_block(block_index, &curr_block, BLOCKSIZE);
+    
     memcpy((void *)&curr_block + byte_offset, (void *)inode_buf, INODESIZE);
     write_block(block_index, &curr_block, BLOCKSIZE);
 }
@@ -85,13 +79,10 @@ uint get_free_inode() {
            
 }
 
-int is_free_inode(struct inode* ino) {
-    return ino->flags >> 15;
-}
 
 // 1 if already allocated
 inline int check_allocation(struct inode *file_inode) {
-    if((file_inode->flags & 0100000) == 0)
+    if((file_inode->flags & 0100000) != 0)
         return 1;
     return 0;
 }

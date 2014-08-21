@@ -1,5 +1,5 @@
-#ifndef __COMMON_FILESYSTEM_JUN__
-#define __COMMON_FILESYSTEM_JUN__
+#ifndef __COMMON_FILESYSTEM_RJ__
+#define __COMMON_FILESYSTEM_RJ__
 
 #include <stdio.h>
 #include <stdlib.h>

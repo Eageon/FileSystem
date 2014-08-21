@@ -1,7 +1,5 @@
-#include "common.h" 
-#include "block.h" 
-#include "inode.h"
-#include "file.h"
+#ifndef __UTIL_FILESYSTEM_RJ__
+#define __UTIL_FILESYSTEM_RJ__
 /*
 dependent on:
   void list_current_directory(char *entry_names[],int* entry_number);
@@ -16,6 +14,6 @@ int curr_fd;
 int initfs(int argc, char** argv);
 int cpin(int argc, char** argv);
 int cpout(int argc, char** argv);
-int makdir(int argc, char** argv);
+int mkdir1(int argc, char** argv);
 int ls(int argc, char** argv);
-
+#endif
